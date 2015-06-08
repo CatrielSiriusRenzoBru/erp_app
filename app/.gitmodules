@@ -1,0 +1,3 @@
+[submodule "Plugin/Highcharts"]
+	path = Plugin/Highcharts
+	url = git://github.com/destinydriven/cakephp-highcharts-plugin.git
