@@ -41,7 +41,6 @@ class AppController extends Controller {
                     'authorize'         => 'Controller'
             )
           ,'DebugKit.Toolbar'
-          ,'Highcharts.Highcharts'
         );
     
     public function isAuthorized( $users ){
