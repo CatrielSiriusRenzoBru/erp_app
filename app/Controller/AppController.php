@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Application level Controller
  *
@@ -31,7 +32,7 @@ App::uses('Controller', 'Controller');
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
-    
+
     public $components = array(
         'Session',
         'Auth' => array(
@@ -43,16 +44,16 @@ class AppController extends Controller {
           ,'DebugKit.Toolbar'
           ,'Highcharts.Highcharts'
         );
-    
+
     public function isAuthorized( $users ){
         return true;
     }
-    
+
     public function beforeFilter(){
         $this->Auth->Allow('login');
         $login_success = $this->Auth->loggedIn();
-        $current_user = $this->Auth->User(); 
+        $current_user = $this->Auth->User();
         $this->set(compact('login_success', 'current_user'));
-    }   
-    
+    }
+
 }
