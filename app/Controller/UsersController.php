@@ -11,7 +11,7 @@ class UsersController extends AppController{
     public function login(){
         if($this->request->is('post')){
             if($this->Auth->login()){
-                $this->redirect( array('controller'=>'users','action'=>'home') );
+                $this->redirect( array('controller'=>'leaverequests','action'=>'plan') );
             } else {
                 $this->Session->setFlash('Username or Password invalid');
             }

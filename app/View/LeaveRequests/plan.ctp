@@ -1,15 +1,14 @@
-
-<div class="container">
-    <h2>Plan Leave</h2>
-    <div class="row">
-        <div class="panel col-lg-6 well">
-<br/>
-
-
+<div class="row">
+        <h2><?php echo __('Plan Leave'); ?></h2>
+        <div class="panel col-lg-6">
+            <div class=" panel panel-primary ">
+                <div class="panel-body">
   <?php 
-            echo $this->Form->Create( 'LeaveRequest', array('default'=>false, "class"=>"form-horizontal"));
+            echo $this->Form->Create( 'LeaveRequest', array('default'=>true, "class"=>"form-horizontal"));
+            
             echo $this->Form->input('leave_type_id', array( 'empty'=>'- Select - ', 'options' => $options, 
-                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Leave Type</label><div class="col-sm-5">', 
+                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Leave Type</label><div class="col-sm-7">', 
+                            'error' => array('attributes' => array('wrap' => 'span', 'class' => 'error-message')),
                             'after'=>'</div></div>',
                             'class'=>'form-control',
                             'label'=>false) 
@@ -32,7 +31,7 @@
                             'label'=>false) 
                     );
             echo $this->Form->input('end_date', array('readonly'=> true, 'type'=>'text', 
-                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">End Date</label><div class="col-sm-9">', 
+                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">End Date</label><div class="col-sm-8">', 
                             'after'=>'</div></div>',
                             'class'=>'form-control',
                             'label'=>false) 
@@ -40,7 +39,7 @@
             echo $this->Form->input('relievers', array('autocomplete'=>'off', 'placeholder'=>'Enter the names of your reliever',
                             'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Relievers</label><div class="col-sm-9">', 
                             'after'=>'</div></div>',
-                            'class'=>'form-control',
+                            'class'=>'form-control panel',
                             'label'=>false) 
                     );
             echo $this->Form->input('employee_comment', array('type'=>'textarea', 'placeholder'=>'Enter some comment...',
@@ -49,19 +48,22 @@
                             'class'=>'form-control',
                             'label'=>false)
                     );
+            
+            echo $this->Form->submit('Send Request', array('id'=>'Login',
+                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label"></label><div class="col-sm-3">', 
+                            'after'=>'</div></div>',
+                            'class'=>'form-control btn btn-primary') 
+                    );
+            echo $this->Form->end();
            ?>
-            <div class="form-group">
-          <label for="title" class="col-sm-3 control-label"></label><div class="col-sm-7">
-          <?php          
-            echo $this->Form->submit('Save', array('class'=>'btn btn-lg btn-primary', 'id'=>'LeaveRequestSave') );
-        ?>
-        </div></div>
+            
         </div>
-    
+            </div>
+        </div>
     
     </div>
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-4">
         <?php 
             $thead = $tbody = '';
             foreach($list as $r){
@@ -83,42 +85,6 @@
                 </tbody>
         </table>
         
-        <table class="table table-hover table-striped table-condensed" width="100%" id="LeavePlanTable">
-            <thead><tr><th>No.</th><th>Start Date</th><th>End Date</th><th>Leave Type</th><th align>Days</th><th>Action</th></tr></thead>
-            <tbody>
-      <?php 
-      $i = 1;
-        foreach($planned as $u){
-            echo '<tr id="tr'.$u["LeaveRequest"]["id"].'"><th>'.$i.'</th><td>'.$u["LeaveRequest"]["start_date"].'</td>'
-                    . '<td>'.$u["LeaveRequest"]["end_date"].'</td>'
-                    . '<td>'.$u["LeaveType"]["title"].'</td>'
-                    . '<td align="center">'.$u["LeaveRequest"]["leave_days"].'</td>'
-                    . '<td class="text-center">
-                        <ul class="nav nav-pills navbar-right">
-                            <li role="presentation" class="dropdown">
-                              <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false" aria-label="Actions for item '.$u["LeaveRequest"]["id"].'">
-                                <span class="glyphicon glyphicon-option-vertical"></span>
-                              </a>
-                              <ul class="dropdown-menu" role="menu" id="action">
-                               <li><li>'.$this->Html->link('Book',
-                                                array('controller'=>'leaverequests', 'action'=>'book', $u["LeaveRequest"]["id"]), array('class'=>'book', 'id'=>$u["LeaveRequest"]["id"])
-                                            ).'</li></li>
-                               <li class="divider"></li>
-                               <li>'.$this->Html->link('Delete',
-                                                array('controller'=>'leaverequests', 'action'=>'delete', $u["LeaveRequest"]["id"]), array('class'=>'delete', 'id'=>$u["LeaveRequest"]["id"])
-                                            ).'</li>
-                              </ul>
-                            </li>
-                            
-                          </ul>
-                    </td></tr>';
         
-            $i++;
-        }
-   
-        ?>
-            
-            </tbody> </table>
     </div>
-    </div>
-  </div> 
+    </div> 

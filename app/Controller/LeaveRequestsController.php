@@ -22,8 +22,9 @@ class LeaveRequestsController extends AppController {
  * @return void
  */
 	public function index() {
-		$this->LeaveRequest->recursive = 0;
-		$this->set('leaveRequests', $this->Paginator->paginate());
+            //show planned leave
+            $planned = $this->LeaveRequest->find('all', array('conditions'=>array('LeaveRequest.leave_status_id'=>1, 'LeaveRequest.deleted'=>0, 'LeaveRequest.employee_id'=>  $this->Auth->user('employee_id'))) );
+            $this->set(compact('planned'));
 	}
 
 /**
@@ -144,15 +145,11 @@ class LeaveRequestsController extends AppController {
             }
             //for leave type drop down
             $this->set(compact('options', 'list'));
-            //show planned leave
-            $planned = $this->LeaveRequest->find('all', array('conditions'=>array('LeaveRequest.leave_status_id'=>1, 'LeaveRequest.deleted'=>0, 'LeaveRequest.employee_id'=>  $this->Auth->user('employee_id'))) );
-            $this->set(compact('planned'));
+            
             
             //when something is posted
-            if ($this->request->is('post')) {
-                    //print_r($this->request->data);exit;
-                    
-                    //validate data before save
+            if ($this->request->is('post', 'put')) {
+                   //validate data before save
                     $leave_records = $this->LeaveRecord->find('first', array('conditions'=>array('LeaveRecord.leave_type_id'=>$this->request->data['LeaveRequest']['leave_type_id'], 'LeaveRecord.leave_year'=>date('Y'), 'LeaveRecord.deleted'=>0, 'LeaveRecord.employee_id'=>$this->Auth->user('employee_id'))) );
                     //print_r($leave_records); exit;
                     switch ($this->request->data['LeaveRequest']['leave_type_id']){
@@ -214,7 +211,8 @@ class LeaveRequestsController extends AppController {
                             $this->request->data['LeaveRequest']['created_by'] = $this->Auth->user('employee_id');
                             $this->request->data['LeaveRequest']['created'] = date('Y-m-d H:i:s');
                             $this->request->data['LeaveRequest']['leave_status_id'] = 1;
-                            $this->LeaveRecord->id = $leave_records['LeaveRecord']['id'];
+                            
+                            $this->LeaveRecord->read(null, $leave_records['LeaveRecord']['id']);
                             
                             $this->LeaveRecord->set(array('employee_id' => $this->Auth->user('employee_id'), 
                                                             'leave_type_id'=>$this->request->data['LeaveRequest']['leave_type_id'], 
@@ -226,26 +224,15 @@ class LeaveRequestsController extends AppController {
                                                             ));
                             $this->LeaveRequest->create();
                             if ($this->LeaveRequest->save($this->request->data) and $this->LeaveRecord->save()) {
-                                $last_id = $this->LeaveRequest->getLastInsertId();
-                                    //$this->Session->setFlash(__('The leave request has been saved.'));
-                                    //return $this->redirect(array('action' => 'index'));
-                                    $response['alert'] = 'Save successully';
-                                    $response['success'] = 1;
-                                    $response['leave_type'] = $leave_records["LeaveType"]["title"];
-                                    $response['startdate'] = $this->request->data['LeaveRequest']['start_date'];
-                                    $response['enddate'] = $enddate;
-                                    $response['leave_days'] = $this->request->data['LeaveRequest']['leave_days'];
-                                    $response['leave_id'] = $last_id;
+                                    $this->Session->setFlash(__('The leave request has been saved.'), 'alert-box', array('class'=>'alert-success') );
+                                    return $this->redirect(array('action' => 'index'));
                         } else {
-                            $response['alert'] = 'Error: '. $enddate;
-                            $response['success'] = 0;
+                            $this->Session->setFlash(__('The leave request could not be saved. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
                         }
                     } else {
                         $response['success'] = 0;
-                            //$this->Session->setFlash(__('The leave request could not be saved. Please, try again.'));
+                        $this->Session->setFlash(__('The leave request could not be saved. Please, check the dates.'), 'alert-box', array('class'=>'alert-danger') );
                     }
-                echo json_encode($response);
-                exit;
 		}
         }
 
@@ -365,11 +352,11 @@ class LeaveRequestsController extends AppController {
         }
         public function reliever(){
             $this->loadModel('Employee');
-            $employees = $this->Employee->find('all');//, array('conditions' => array('Employee.team_id'=>'')));
+            $employees = $this->Employee->find('all', array('recursive'=>-1, 'conditions'=>array('Employee.manager_id'=>$this->Session->read("Auth.User.Employee.manager_id"),'Employee.id !='=>$this->Auth->user('id'))));
             //print_r($employees);
             $json = '[';
             foreach($employees as $emp){
-                $json .= '{"id":"'.$emp['User']['employee_id'].'", "name":"'.$emp['User']['firstname'].' '.$emp['User']['othernames'].' '.$emp['User']['lastname'].'"},';
+                $json .= '{"id":"'.$emp['Employee']['id'].'", "name":"'.$emp['Employee']['firstname'].' '.$emp['Employee']['othernames'].' '.$emp['Employee']['lastname'].'"},';
             }
             $json = trim($json, ',');
             $json .= ']';
@@ -380,7 +367,6 @@ class LeaveRequestsController extends AppController {
             if(isset($_POST['leave_type_id'])){
                 extract($_POST);
                 $response = array();
-                //print_r($_POST); exit;
 		$ddays = $leave_days;
 		//check what type of leave type and return end date
                 $this->loadModel('LeaveRecord');

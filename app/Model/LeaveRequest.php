@@ -14,68 +14,38 @@ class LeaveRequest extends AppModel {
  *
  * @var array
  */
-//	public $validate = array(
-//		'employee_id' => array(
-//			'numeric' => array(
-//				'rule' => array('numeric'),
-//				//'message' => 'Your custom message here',
-//				//'allowEmpty' => false,
-//				//'required' => false,
-//				//'last' => false, // Stop validation after this rule
-//				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-//			),
-//		),
-//		'leave_type_id' => array(
-//			'notEmpty' => array(
-//				'rule' => array('notEmpty'),
-//				//'message' => 'Your custom message here',
-//				//'allowEmpty' => false,
-//				//'required' => false,
-//				//'last' => false, // Stop validation after this rule
-//				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-//			),
-//		),
-//		'leave_days' => array(
-//			'notEmpty' => array(
-//				'rule' => array('notEmpty'),
-//				//'message' => 'Your custom message here',
-//				//'allowEmpty' => false,
-//				//'required' => false,
-//				//'last' => false, // Stop validation after this rule
-//				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-//			),
-//		),
-//		'start_date' => array(
-//			'datetime' => array(
-//				'rule' => array('datetime'),
-//				//'message' => 'Your custom message here',
-//				//'allowEmpty' => false,
-//				//'required' => false,
-//				//'last' => false, // Stop validation after this rule
-//				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-//			),
-//		),
-//		'end_date' => array(
-//			'datetime' => array(
-//				'rule' => array('datetime'),
-//				//'message' => 'Your custom message here',
-//				//'allowEmpty' => false,
-//				//'required' => false,
-//				//'last' => false, // Stop validation after this rule
-//				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-//			),
-//		),
-//		'relievers' => array(
-//			'notEmpty' => array(
-//				'rule' => array('notEmpty'),
-//				//'message' => 'Your custom message here',
-//				//'allowEmpty' => false,
-//				//'required' => false,
-//				//'last' => false, // Stop validation after this rule
-//				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-//			),
-//		),
-//	);
+	public $validate = array(
+		'leave_type_id' => array(
+                    "notEmpty"  => array(
+                        "rule"          => "notEmpty",
+                        "message"       => "Can't be empty",
+                        ),
+		),
+		'leave_days' => array(
+                    "notEmpty"  => array(
+                        "rule"          => "notEmpty",
+                        "message"       => "Can't be empty",
+                        ),
+		),
+		'start_date' => array(
+                    "notEmpty"  => array(
+                        "rule"          => "notEmpty",
+                        "message"       => "Can't be empty",
+                        ),
+                ),
+		'end_date' => array(
+                    "notEmpty"  => array(
+                        "rule"          => "notEmpty",
+                        "message"       => "Can't be empty",
+                        ),
+		),
+		'relievers' => array(
+                    "notEmpty"  => array(
+                        "rule"          => "notEmpty",
+                        "message"       => "Can't be empty",
+                        ),
+		),
+	);
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 

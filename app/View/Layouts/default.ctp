@@ -84,7 +84,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
      <?php 
      echo $this->Html->script([
                     'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js'
-                    ,'general'
+                    ,'actionjs'
                     ,'tokenizer/jquery.tokeninput'
                     ,'https://code.jquery.com/ui/1.11.2/jquery-ui.js'
                 ]);

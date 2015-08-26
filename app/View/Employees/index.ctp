@@ -13,7 +13,7 @@
                    <th><?php echo $this->Paginator->sort('employee_type_id', 'Type'); ?></th>
                    <th></th></tr></thead>
             <tbody>
-                <?php echo '<pre>'; print_r($employees); exit;
+                <?php //echo '<pre>'; print_r($employees); exit;
                 if(!empty($employees)){
                     foreach($employees as $e){
                         echo ' <tr><td>'.$e['Employee']['firstname'].' '.$e['Employee']['othernames'].' <b>'.$e['Employee']['lastname'].'</b></td>'
