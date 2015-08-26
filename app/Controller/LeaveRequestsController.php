@@ -22,8 +22,12 @@ class LeaveRequestsController extends AppController {
  * @return void
  */
 	public function index() {
-            //show planned leave
-            $planned = $this->LeaveRequest->find('all', array('conditions'=>array('LeaveRequest.leave_status_id'=>1, 'LeaveRequest.deleted'=>0, 'LeaveRequest.employee_id'=>  $this->Auth->user('employee_id'))) );
+            $this->Paginator->settings = array(
+                'conditions'=>array('LeaveRequest.leave_status_id'=>1, 'LeaveRequest.deleted'=>0, 'LeaveRequest.employee_id'=>  $this->Auth->user('employee_id')),
+                'limit' => 15,
+                'recursive' => 0
+            );
+            $planned = $this->Paginator->paginate('LeaveRequest');
             $this->set(compact('planned'));
 	}
 
@@ -35,6 +39,7 @@ class LeaveRequestsController extends AppController {
  * @return void
  */
 	public function view($id = null) {
+                $this->layout = null;
 		if (!$this->LeaveRequest->exists($id)) {
 			throw new NotFoundException(__('Invalid leave request'));
 		}
@@ -315,8 +320,6 @@ class LeaveRequestsController extends AppController {
             }
         }
         public function inbox(){
-            //$this->LeaveRequest->recursive = 2;
-            //$this->set('planned', $this->Paginator->paginate());
             
             $this->Paginator->settings = array(
                 'conditions' => array('LeaveRequest.leave_status_id' => '2'),
