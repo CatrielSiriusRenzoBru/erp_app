@@ -23,7 +23,7 @@ class LeaveRequestsController extends AppController {
  */
 	public function index() {
             $this->Paginator->settings = array(
-                'conditions'=>array('LeaveRequest.leave_status_id'=>1, 'LeaveRequest.deleted'=>0, 'LeaveRequest.employee_id'=>  $this->Auth->user('employee_id')),
+                'conditions'=>array('LeaveRequest.deleted'=>0, 'LeaveRequest.employee_id'=>  $this->Auth->user('employee_id')),
                 'limit' => 15,
                 'recursive' => 0
             );
@@ -44,7 +44,14 @@ class LeaveRequestsController extends AppController {
 			throw new NotFoundException(__('Invalid leave request'));
 		}
 		$options = array('conditions' => array('LeaveRequest.' . $this->LeaveRequest->primaryKey => $id));
-		$this->set('leaveRequest', $this->LeaveRequest->find('first', $options));
+		
+                $leaveRequest = $this->LeaveRequest->find('first', $options);
+                //find the relievers
+                $arr = explode(',',$leaveRequest['LeaveRequest']['relievers']);
+                $this->loadModel('Employee');
+                $relievers = $this->Employee->find('all', array('recursive'=>-1, 'fields'=>array('firstname', 'othernames', 'lastname'), 'conditions'=>array('Employee.id'=>$arr)) );
+                
+                $this->set(compact('leaveRequest', 'relievers'));
 	}
 
 /**
@@ -254,28 +261,33 @@ class LeaveRequestsController extends AppController {
         }
         
         public function calendar($id = null){
-            //$this->LeaveRequest->recursive = -1;
-            $options['joins'] = array(
-                array('table' => 'users',
-                    'alias' => 'User',
-                    'type' => 'LEFT',
-                    'foreignKey' => 'employee_id',
-                    'conditions' => array(
-                        'LeaveRequest.employee_id = User.employee_id',
-                    )
-                )
-            );
-            $options['conditions'] = array(
-                'LeaveRequest.deleted' => 0
-            );
-            $options['fields'] = array('LeaveRequest.*', 'User.*' /*, 'LeaveType.*', 'LeaveStatus.*'*/);
-            $leaves = $this->LeaveRequest->find('all', array('contain'=>array('Employee')));
-            //echo '<pre>'; print_r($leaves); exit;
+            //get month and year
             if(!isset($id)){
-                $this->set(compact('leaves'));
-                //exit;
+                $date = date('m-Y');
             } else {
                 $date = $id;
+            }
+            $val = explode('-', $date);
+            $number = cal_days_in_month(CAL_GREGORIAN, $val[0], $val[1]);
+            $start = $val[1].'-'.$val[0].'-1';
+            $end = $val[1].'-'.$val[0].'-'.$number;
+            
+            $leaves = $this->LeaveRequest->find('all', array(
+                'recursive'=>0,
+                'fields'=>array('LeaveRequest.leave_status_id', 'LeaveRequest.start_date', 'LeaveRequest.end_date', 'Employee.firstname', 'Employee.othernames', 'Employee.lastname'),
+                'conditions'=>array(
+                'Employee.team_id'=>$this->Session->read('Auth.User.Employee.team_id'),
+                'OR'=>array(
+                    array('LeaveRequest.start_date <= '=>$start,'LeaveRequest.end_date >= '=>$start),
+                    array('LeaveRequest.start_date >='=>$start,'LeaveRequest.end_date <='=>$end),
+                    array('LeaveRequest.start_date <='=>$end,'LeaveRequest.end_date >='=>$end)
+                 )
+                 )));
+            //echo '<pre>'; print_r($leaves);exit;
+            if(!isset($id)){
+                $this->set('leaves',$leaves);
+            } else {
+                $date = $start;
                 $month_id = date('d', strtotime($date));
                 $totalDays = date('t', strtotime($date));
 
@@ -286,7 +298,7 @@ class LeaveRequestsController extends AppController {
                     $month = date('m', strtotime($date));   //init month for calendar
                     $day = date('d', strtotime($date));     //init day for calendar
                     //create table headers
-                    $mainBody .= '<tr><th>'.$r['Employee']['firstname'].' '.$r['Employee']['othernames'].' '.$r['Employee']['lastname'].'</th>'; //print the name of employee on the current leave you are working on
+                    $mainBody .= '<tr><th>'.$r['Employee']['firstname'].' '.substr($r['Employee']['othernames'],0,1).'. '.$r['Employee']['lastname'].'</th>'; //print the name of employee on the current leave you are working on
                     if($counter === 0){                         //print blank starting cell for 
                         $dAlpha = '<th></th>';                  //M T W T F S S block
                         $dNum = '<th></th>';                    // 1 2 3 4 5 6 ... 28 or 30 or 31 etc block
@@ -298,9 +310,34 @@ class LeaveRequestsController extends AppController {
                             $dAlpha .= '<th '.$css.'>'.  substr($nextDay, 0, 1).'</th>';
                             $dNum .= '<th '.$css.'>'.$i.'</th>';
 
-                        }                                       //end of printing header once
+                        }
+                        //end of printing header once
+                        
+                        //generate colours based on status 
+                        switch($r['LeaveRequest']['leave_status_id']){
+                            case 1:
+                                $colour = 'orange';
+                            break;
+                            case 2:
+                                $colour = 'yellow';
+                            break;
+                            case 3:
+                                $colour = 'green';
+                            break;
+                            case 4:
+                                $colour = 'red';
+                            break;
+                            case 5:
+                                $colour = 'blue';
+                            break;
+                            case 1:
+                                $colour = 'lightgreen';
+                            break;
+                            default: $colour = 'black';
+                        }
+                        
                         //do main body below
-                        $css2 = ' style="background-color:#3b7dba"'; //cumtom css this shouldn't be here better declared in CSS file and class called here
+                        $css2 = ' style="background-color:'.$colour.'"'; //cumtom css this shouldn't be here better declared in CSS file and class called here
                         $nextDate = date('Y-m-d', mktime(0, 0, 0, $month, $day, $year)); //generate each day, this is a php thing you need to find Ruby equivalent Make Time/ Make Date
                         if( $nextDate >= $r['LeaveRequest']['start_date'] and $nextDate <= $r['LeaveRequest']['end_date'] ){ //main logic for printing is day is booked no need for all the plenty if blocks in the previous solution
                             $mainBody .= '<th '.$css2.'>&nbsp;</th>';                        //print the booked day
@@ -322,41 +359,113 @@ class LeaveRequestsController extends AppController {
         public function inbox(){
             
             $this->Paginator->settings = array(
-                'conditions' => array('LeaveRequest.leave_status_id' => '2'),
+                'conditions' => array('LeaveRequest.leave_status_id' => 2, 'LeaveRequest.deleted' => 0),
                 'limit' => 15,
-                'recursive' => 2
+                'recursive' => 0
             );
             $planned = $this->Paginator->paginate('LeaveRequest');
             $this->set(compact('planned'));
             
             
         }
+        
         public function report(){
 
         }
+        
         public function book($id = null){
-            $response = array();
-		$this->LeaveRequest->id = $id;
-		if (!$this->LeaveRequest->exists()) {
-			throw new NotFoundException(__('Invalid leave request'));
-		}
-                    $this->request->id = $id;
-                    $this->LeaveRequest->set(array('leave_status_id'=>2));
-                    if ($this->LeaveRequest->save()) {
-                        $response['alert'] = "The leave request has been booked successfully.";
-                        $response['success'] = 1;
-                    } else {
-                        $response['success'] = 0;
-                        $response['alert'] = "The leave request could not be booked. Please, try again.";
-                    }
-                
-                echo json_encode($response);
-                exit;
+            $this->LeaveRequest->id = $id;
+            if (!$this->LeaveRequest->exists()) {
+                    throw new NotFoundException(__('Invalid leave request'));
+            }
+            $this->LeaveRequest->read(null, $id);
+            $this->LeaveRequest->set(array('leave_status_id'=>2));
+            if($this->LeaveRequest->save()) {
+                $this->Session->setFlash(__('The leave request has been booked successfully.'), 'alert-box', array('class'=>'alert-success') );
+                return $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('The leave request could not be booked. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
+            }
         }
+        
+        public function approve($id = null){
+            $this->LeaveRequest->id = $id;
+            if (!$this->LeaveRequest->exists()) {
+                    throw new NotFoundException(__('Invalid leave request'));
+            }
+            //validate approvals
+            $newStatus = 3;
+            $this->validateApproval($id, $newStatus);
+            $this->LeaveRequest->read(null, $id);
+            $this->LeaveRequest->set(array('leave_status_id'=>$newStatus
+                                            , 'approved_date'=>date('Y-m-d H:i:s')
+                                            ,'approver'=>$this->Auth->user('id')));
+            if($this->LeaveRequest->save()) {
+                $this->Session->setFlash(__('The leave request has been approved successfully.'), 'alert-box', array('class'=>'alert-success') );
+                return $this->redirect(array('action' => 'inbox'));
+            } else {
+                $this->Session->setFlash(__('The leave request could not be approved. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
+            }
+        }
+        
+        public function reject($id = null){
+            $this->LeaveRequest->id = $id;
+            if (!$this->LeaveRequest->exists()) {
+                    throw new NotFoundException(__('Invalid leave request'));
+            }
+            //validate approvals
+            $newStatus = 4;
+            $this->validateApproval($id, $newStatus);
+            $this->LeaveRequest->read(null, $id);
+            $this->LeaveRequest->set(array('leave_status_id'=>$newStatus
+                                            , 'approved_date'=>date('Y-m-d H:i:s')
+                                            ,'approver'=>$this->Auth->user('id')));
+            if($this->LeaveRequest->save()) {
+                $this->Session->setFlash(__('The leave request has been rejected successfully.'), 'alert-box', array('class'=>'alert-success') );
+                return $this->redirect(array('action' => 'inbox'));
+            } else {
+                $this->Session->setFlash(__('The leave request could not be rejected. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
+            }
+        }
+        
+        public function validateApproval($id = null, $newStatus){
+            $this->LeaveRequest->id = $id;
+            if (!$this->LeaveRequest->exists()) {
+                    throw new NotFoundException(__('Invalid leave request'));
+            }
+            $leave = $this->LeaveRequest->find('first', array('recursive'=>-1, 'conditions'=>array('LeaveRequest.id'=>$id)));
+            
+            //leave cannot be approved by requester
+            if($this->Auth->user('id')==$leave['LeaveRequest']['employee_id']){
+                $this->Session->setFlash(__('You are not authorized to approve your own leave, an alert has been sent to the system administrator about this action.'), 'alert-box', array('class'=>'alert-warning') );
+                return $this->redirect(array('action' => 'error'));
+            }
+            exit('stop');
+            //approver must have approval rights
+            if($this->Session->read('Auth.User.UserRole.id')>2){
+                $this->Session->setFlash(__('You are not authorized to approve your own leave, an alert has been sent to the system administrator about this action.'), 'alert-box', array('class'=>'alert-warning') );
+                return $this->redirect(array('action' => 'error'));
+            }
+            //approved and rejected leave cannot be changed
+            if(in_array($leave['LeaveRequest']['leave_status_id'], array(3,4))){
+                $this->Session->setFlash(__('You are not authorized to modify this request, an alert has been sent to the system administrator about this action.'), 'alert-box', array('class'=>'alert-warning') );
+                return $this->redirect(array('action' => 'error'));
+            }
+            //leave status cannot be reverted
+            if($leave['LeaveRequest']['leave_status'] > $newStatus){
+                $this->Session->setFlash(__('You are not authorized to modify this request, an alert has been sent to the system administrator about this action.'), 'alert-box', array('class'=>'alert-warning') );
+                return $this->redirect(array('action' => 'error'));
+            }
+        }
+        
+        public function error(){
+            
+        }
+        
         public function reliever(){
             $this->loadModel('Employee');
             $employees = $this->Employee->find('all', array('recursive'=>-1, 'conditions'=>array('Employee.manager_id'=>$this->Session->read("Auth.User.Employee.manager_id"),'Employee.id !='=>$this->Auth->user('id'))));
-            //print_r($employees);
+            
             $json = '[';
             foreach($employees as $emp){
                 $json .= '{"id":"'.$emp['Employee']['id'].'", "name":"'.$emp['Employee']['firstname'].' '.$emp['Employee']['othernames'].' '.$emp['Employee']['lastname'].'"},';

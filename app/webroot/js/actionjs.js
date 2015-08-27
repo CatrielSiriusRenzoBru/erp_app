@@ -1,4 +1,8 @@
 $(document).ready(function(){
+    $('body').on('hidden.bs.modal', '.modal', function () {
+        $(this).removeData('bs.modal');
+    });
+    
     $(function() {
         $( "#datepicker" ).datepicker({
             dateFormat: 'yy-mm-dd'
@@ -246,7 +250,7 @@ $('#next').click(function(){
     $('#month').val(m);
     $('#year').val(y);
     $('.lead').html('<b>'+month[m-1]+'</b> '+y);
-    var jqxhr = $.post( "/erp/leaverequests/calendar/"+y+'-'+m+'-1', function(data) {
+    var jqxhr = $.post( "/erp/leaverequests/calendar/"+m+'-'+y, function(data) {
         if(data['success']===1){
             $(".calendar_view").html(data["html"]);
         } else {
@@ -268,7 +272,7 @@ $('#previous').click(function(){
     $('#month').val(m);
     $('#year').val(y);
     $('.lead').html('<b>'+month[m-1]+'</b> '+y);
-    var jqxhr = $.post( "/erp/leaverequests/calendar/"+y+'-'+m+'-1', function(data) {
+    var jqxhr = $.post( "/erp/leaverequests/calendar/"+m+'-'+y, function(data) {
         if(data['success']===1){
             $(".calendar_view").html(data["html"]);
         } else {

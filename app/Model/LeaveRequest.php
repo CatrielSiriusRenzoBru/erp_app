@@ -75,6 +75,13 @@ class LeaveRequest extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
-		)
+		),
+                'Approver' => array(
+			'className' => 'Employee',
+			'foreignKey' => 'approver',
+			'conditions' => '',
+			'fields' => 'firstname, othernames, lastname',
+			'order' => ''
+		),
 	);
 }
