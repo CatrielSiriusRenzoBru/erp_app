@@ -16,6 +16,7 @@ class LeaveRequestsController extends AppController {
  */
 	public $components = array('Paginator', 'Session');
 
+       
 /**
  * index method
  *
@@ -91,15 +92,20 @@ class LeaveRequestsController extends AppController {
 				$this->Session->setFlash(__('The leave request has been saved.'));
 				return $this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('The leave request could not be saved. Please, try again.'));
+                                $this->Session->setFlash(__('The leave request could not be saved. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
 			}
 		} else {
 			$options = array('conditions' => array('LeaveRequest.' . $this->LeaveRequest->primaryKey => $id));
 			$this->request->data = $this->LeaveRequest->find('first', $options);
 		}
-		$employees = $this->LeaveRequest->Employee->find('list');
-		$leaves = $this->LeaveRequest->Leave->find('list');
-		$statuses = $this->LeaveRequest->Status->find('list');
+		$this->loadModel('LeaveRecord');
+                $list = $this->LeaveRecord->find( 'all', array('conditions'=>array('employee_id'=>$this->Auth->user('employee_id'))) );
+                $options = array();
+                foreach($list as $row){
+                    $options[$row['LeaveType']['id']] = $row['LeaveType']['title'];
+                }
+                //for leave type drop down
+                $this->set(compact('options', 'list'));
 		$this->set(compact('employees', 'leaves', 'statuses'));
 	}
 
@@ -148,7 +154,6 @@ class LeaveRequestsController extends AppController {
                 exit;
 	}
         public function plan(){
-            $response = array();
             $this->loadModel('LeaveRecord');
             $list = $this->LeaveRecord->find( 'all', array('conditions'=>array('employee_id'=>$this->Auth->user('employee_id'))) );
             $options = array();
@@ -157,7 +162,6 @@ class LeaveRequestsController extends AppController {
             }
             //for leave type drop down
             $this->set(compact('options', 'list'));
-            
             
             //when something is posted
             if ($this->request->is('post', 'put')) {
@@ -363,8 +367,35 @@ class LeaveRequestsController extends AppController {
                 'limit' => 15,
                 'recursive' => 0
             );
+            $this->loadModel('Employee');
+            $condition = array(
+              'recursive'=>0,
+              'fields'=>array(
+                  'Employee.id',
+                  'fullname',
+              ),
+              'conditions' => array(
+                'Employee.team_id'=> $this->Session->read('Auth.User.Employee.team_id'),
+                'User.user_role_id'=>$this->Session->read('Auth.User.UserRole.id'),
+                'Employee.id <>'=>$this->Session->read('Auth.User.id')
+                ));
+            $options = $this->Employee->find('list', $condition);
+            if(empty($options)){
+                $condition = array(
+              'recursive'=>0,
+              'fields'=>array(
+                  'Employee.id',
+                  'fullname',
+              ),
+              'conditions' => array(
+                'Employee.department_id'=> $this->Session->read('Auth.User.Employee.department_id'),
+                'User.user_role_id'=>$this->Session->read('Auth.User.UserRole.id'),
+                'Employee.id <>'=>$this->Session->read('Auth.User.id')
+                ));
+            $options = $this->Employee->find('list', $condition);
+            }
             $planned = $this->Paginator->paginate('LeaveRequest');
-            $this->set(compact('planned'));
+            $this->set(compact('planned', 'options'));
             
             
         }
@@ -576,3 +607,109 @@ class LeaveRequestsController extends AppController {
                 return $range[$leave_days - 1];
         }
 }
+
+
+//if (!$this->LeaveRequest->exists($id)) {
+//			throw new NotFoundException(__('Invalid leave request'));
+//            }
+//            $this->loadModel('LeaveRecord');
+//            $list = $this->LeaveRecord->find( 'all', array('conditions'=>array('employee_id'=>$this->Auth->user('employee_id'))) );
+//            $options = array();
+//            foreach($list as $row){
+//                $options[$row['LeaveType']['id']] = $row['LeaveType']['title'];
+//            }
+//          
+//            $details = $this->LeaveRequest->find('first', array('conditions'=>array('LeaveRequest.id'=>$id, 'LeaveRequest.deleted'=>0)));
+//            $start_date = $details['LeaveRequest']['start_date'];
+//            $end_date = $details['LeaveRequest']['end_date'];
+//            $leave_days = $details['LeaveRequest']['leave_days'];
+//            $employee_comment = $details['LeaveRequest']['employee_comment'];
+//            $this->set(compact('start_date', 'options', 'list', 'employee_comment', 'leave_days', 'end_date' ));
+//            //when something is posted
+//            if ($this->request->is('post', 'put')) {
+//                   //validate data before save
+//                    $leave_records = $this->LeaveRecord->find('first', array('conditions'=>array('LeaveRecord.leave_type_id'=>$this->request->data['LeaveRequest']['leave_type_id'], 'LeaveRecord.leave_year'=>date('Y'), 'LeaveRecord.deleted'=>0, 'LeaveRecord.employee_id'=>$this->Auth->user('employee_id'))) );
+//                    //print_r($leave_records); exit;
+//                    switch ($this->request->data['LeaveRequest']['leave_type_id']){
+//                        case 1:
+//                            if($this->request->data['LeaveRequest']['leave_days'] <= $leave_records['LeaveRecord']['days_left']){
+//                                $enddate = $this->calculateEnd( $this->request->data['LeaveRequest']['start_date'], $this->request->data['LeaveRequest']['leave_days'],  $leave_records['LeaveType']['weekends']);
+//                                $error = false;
+//                                if( $this->request->data['LeaveRequest']['leave_days'] > $leave_records['LeaveType']['max_days']){
+//                                    $enddate = 'The maximum you can book for this leave type is '.$leave_records['LeaveType']['max_days'].' days.';
+//                                    $error = true;
+//                                }
+//                            } else {
+//                                $enddate = 'You cannot book '.$this->request->data['LeaveRequest']['leave_days'].' days, you only have '.$leave_records['LeaveRecord']['days_left'].' days.';
+//                                $error = true;
+//                            }
+//                        break;
+//                        case 2:
+//                            $enddate = $this->calculateEnd( $this->request->data['LeaveRequest']['start_date'], $this->request->data['LeaveRequest']['leave_days'],  $leave_records['LeaveType']['weekends']);
+//                            $error = false;
+//                        break;
+//                        case 3:
+//                            if($this->request->data['LeaveRequest']['leave_days'] <= $leave_records['LeaveRecord']['days_left']){
+//                                $enddate = $this->calculateEnd( $this->request->data['LeaveRequest']['start_date'], $this->request->data['LeaveRequest']['leave_days'],  $leave_records['LeaveType']['weekends']);
+//                                $error = false;
+//                            } else {
+//                                $enddate = 'You do not have enough days';
+//                                $error = true;
+//                            }
+//                        break;
+//                        case 4:
+//                            if($this->request->data['LeaveRequest']['leave_days'] <= $leave_records['LeaveRecord']['days_left']){
+//                                $enddate = $this->calculateEnd( $this->request->data['LeaveRequest']['startdate'], $this->request->data['LeaveRequest']['leave_days'],  $leave_records['LeaveType']['weekends']);
+//                                $ddays = $leave_records['LeaveRecord']['days_left'];
+//                                $error = false;
+//                            } else {
+//                                $enddate = 'You do not have enough days';
+//                                $error = true;
+//                            }
+//                        break;
+//                        case 5:
+//                            if($leave_days <= $leave_records['LeaveRecord']['days_left']){
+//                                $enddate = $this->calculateEnd( $this->request->data['LeaveRequest']['startdate'], $this->request->data['LeaveRequest']['leave_days'],  $leave_records['LeaveType']['weekends']);
+//                                $ddays = $leave_records['LeaveRecord']['days_left'];
+//                                $error = false;
+//                            } else {
+//                                $enddate = 'You do not have enough days';
+//                                $error = true;
+//                            }
+//                        break;
+//                        default: $enddate = 'Could not retrieve the end date'; $error = true;
+//                    }
+//                    
+//                    
+//                    $this->request->data['LeaveRequest']['end_date'] = $enddate;
+//                    //end of validation
+//                        if($error === false){
+//                            $this->request->data['LeaveRequest']['employee_id'] = $this->Auth->user('employee_id');
+//                            $this->request->data['LeaveRequest']['days_type'] = (!isset($this->request->data['LeaveRequest']['days_type'])) ? 'Full' : 'Half';
+//                            $this->request->data['LeaveRequest']['created_by'] = $this->Auth->user('employee_id');
+//                            $this->request->data['LeaveRequest']['created'] = date('Y-m-d H:i:s');
+//                            $this->request->data['LeaveRequest']['leave_status_id'] = 1;
+//                            
+//                            $this->LeaveRecord->read(null, $leave_records['LeaveRecord']['id']);
+//                            $this->LeaveRequest->read(null, $id);
+//                            
+//                            $this->LeaveRecord->set(array('employee_id' => $this->Auth->user('employee_id'), 
+//                                                            'leave_type_id'=>$this->request->data['LeaveRequest']['leave_type_id'], 
+//                                                            'days_left' => $leave_records['LeaveRecord']['days_left']-$this->request->data['LeaveRequest']['leave_days'], 
+//                                                            'days_taken'=>$leave_records['LeaveRecord']['days_taken']+$this->request->data['LeaveRequest']['leave_days'],
+//                                                            'leave_year'=>date('Y'),
+//                                                            'modified_by'=>$this->Auth->user('employee_id'),
+//                                                            'modified' => date('Y-m-d H:i:s')
+//                                                            ));
+//                            $this->LeaveRequest->set($this->request->data);
+//                            if ($this->LeaveRequest->save() and $this->LeaveRecord->save()) {
+//                                    $this->Session->setFlash(__('The leave request has been saved.'), 'alert-box', array('class'=>'alert-success') );
+//                                    return $this->redirect(array('action' => 'index'));
+//                        } else {
+//                            $this->Session->setFlash(__('The leave request could not be saved. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
+//                        }
+//                    } else {
+//                        $response['success'] = 0;
+//                        $this->Session->setFlash(__('The leave request could not be saved. Please, check the dates.'), 'alert-box', array('class'=>'alert-danger') );
+//                    }
+//		}

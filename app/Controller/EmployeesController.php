@@ -19,6 +19,29 @@ class EmployeesController extends AppController {
 //        function beforeFilter() {
 //            parent::beforeFilter();
 //        }
+        
+/**
+ * delegate method
+ *
+ * @return void
+ */
+	public function delegate() {
+		if (!$this->Employee->exists($this->Session->read('Auth.User.Employee.id'))) {
+			throw new NotFoundException(__('Employee does not exist'));
+                }
+		if ($this->request->is(array('post', 'put'))) { 
+                        $this->Employee->read(null, $this->Session->read('Auth.User.Employee.id'));
+                        $this->Employee->set(array('delegated_id'=>$this->request->data['Employee']['delegated_id']));
+			if ($this->Employee->save()) {
+				$this->Session->setFlash(__('The delegated line manager has been saved.'));
+				return $this->redirect(array('controller'=>'leaverequests', 'action' => 'inbox'));
+			} else {
+				$this->Session->setFlash(__('The delegated line manager could not be saved. Please, try again.'));
+                                return $this->redirect(array('controller'=>'leaverequests', 'action' => 'inbox'));
+			}
+		}
+        }
+        
 /**
  * index method
  *
