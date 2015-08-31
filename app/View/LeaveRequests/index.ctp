@@ -28,6 +28,7 @@
                     . '<td>'.$u["LeaveStatus"]["title"].'</td>'
                     . '<td class="text-right">'
 			. $this->Html->link('<span class="glyphicon glyphicon-info-sign"></span>'.__(' View'), array('action' => 'view', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-default btn-sm', "data-toggle"=>"modal", "data-target"=>"#viewDetails")).' '
+                        . $this->Html->link('<span class="glyphicon glyphicon-info-sign"></span>'.__(' Edit'), array('action' => 'edit', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm'), __('Are you sure you want to edit this leave?')).' '
 			. $this->Form->postLink('<span class="glyphicon glyphicon-ok-circle">'.__(' Book').'</span>', array('action' => 'book', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm'), __('Are you sure you want to book this leave?')).' '
 			. $this->Form->postLink('<span class="glyphicon glyphicon-ban-circle">'.__(' Delete').'</span>', array('action' => 'delete', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to delete this leave'))
 		.'
