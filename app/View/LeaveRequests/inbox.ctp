@@ -1,4 +1,32 @@
 <div class="row">
+    <h2 class="form-signin-heading"><?php echo __('Delegate Aproval'); ?></h2>
+       <div class="panel col-lg-12">
+            <div class=" panel panel-primary ">
+                <div class="panel-body">
+                    <p>Please select the Line Manager below you wish to delegate your approvals to.</p>
+                    <?php 
+            echo $this->Form->Create( 'Employee', array('action'=>'delegate', "class"=>"form-horizontal"));
+            
+            echo $this->Form->input('delegated_id', array( 'empty'=>'- Select - ', 
+                            'options' => $options, 
+                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Line Manager</label><div class="col-sm-7">', 
+                            'error' => array('attributes' => array('wrap' => 'span', 'class' => 'error-message')),
+                            'after'=>'</div></div>',
+                            'class'=>'form-control',
+                            'label'=>false) 
+                    );
+            echo $this->Form->submit('Delegate Approval', array('id'=>'Login',
+                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label"></label><div class="col-sm-3">', 
+                            'after'=>'</div></div>',
+                            'class'=>'form-control btn btn-primary') 
+                    );
+            echo $this->Form->end();
+            ?>
+                </div>
+            </div>
+       </div>
+</div>
+<div class="row">
        <h2 class="form-signin-heading"><?php echo __('Pending Requests'); ?></h2>
        <div class="panel col-lg-12">
             <div class=" panel panel-primary ">
