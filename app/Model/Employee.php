@@ -28,6 +28,8 @@ App::uses('AppModel', 'Model');
  * @property User $User
  */
 class Employee extends AppModel {
+    
+    public $virtualFields = array('fullname'=>'CONCAT(Employee.firstname, " ", IFNULL(Employee.othernames,""), " ", Employee.lastname)');
 
 /**
  * Validation rules
