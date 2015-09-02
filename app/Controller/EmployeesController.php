@@ -19,7 +19,7 @@ class EmployeesController extends AppController {
 //        function beforeFilter() {
 //            parent::beforeFilter();
 //        }
-        
+
 /**
  * delegate method
  *
@@ -29,7 +29,7 @@ class EmployeesController extends AppController {
 		if (!$this->Employee->exists($this->Session->read('Auth.User.Employee.id'))) {
 			throw new NotFoundException(__('Employee does not exist'));
                 }
-		if ($this->request->is(array('post', 'put'))) { 
+		if ($this->request->is(array('post', 'put'))) {
                         $this->Employee->read(null, $this->Session->read('Auth.User.Employee.id'));
                         $this->Employee->set(array('delegated_id'=>$this->request->data['Employee']['delegated_id']));
 			if ($this->Employee->save()) {
@@ -41,13 +41,13 @@ class EmployeesController extends AppController {
 			}
 		}
         }
-        
+
 /**
  * index method
  *
  * @return void
  */
-       
+
 	public function index() {
 		$this->Employee->recursive = 0;
                 $this->paginate = array(
@@ -68,13 +68,13 @@ class EmployeesController extends AppController {
 		if (!$this->Employee->exists($id)) {
 			throw new NotFoundException(__('Invalid employee'));
 		}
-                
-                
-                
+
+
+
                 $chartName = 'Column Chart';
-                
+
                 $mychart = $this->Highcharts->create($chartName, 'column');
-                
+
                 $this->Highcharts->setChartParams($chartName, array(
                     'renderTo' => 'columnwrapper', // div to display chart inside
                     'chartWidth' => 800,
@@ -155,9 +155,9 @@ class EmployeesController extends AppController {
                 $mychart->addSeries($series1);
                 $mychart->addSeries($series2);
                 $mychart->addSeries($series3);
-                
-                
-                
+
+
+
 		$options = array('recursive'=>0, 'conditions' => array('Employee.' . $this->Employee->primaryKey => $id));
 		$employees = $this->Employee->find('first', $options);
                 $team = $this->Employee->Team->find('first', array('recursive'=>0, 'conditions'=>array('Team.id'=>$employees['Employee']['team_id'])));
@@ -178,7 +178,7 @@ class EmployeesController extends AppController {
                         $this->User->create();
 			if ($this->Employee->save($this->request->data['Employee']) ){
                                 $id = $this->Employee->getLastInsertID();
-                                $this->User->data['User']['employee_id'] = $id; 
+                                $this->User->data['User']['employee_id'] = $id;
                                 $this->User->save($this->request->data['User']);
 				$this->Session->setFlash(__('The details of the employee was saved successfully.'), 'alert-box', array('class'=>'alert-success') );
 				return $this->redirect(array('action' => 'index'));
@@ -206,7 +206,7 @@ class EmployeesController extends AppController {
                         $this->User->create();
 			if ($this->Employee->save($this->request->data['Employee']) ){
                                 $id = $this->Employee->getLastInsertID();
-                                $this->User->data['User']['employee_id'] = $id; 
+                                $this->User->data['User']['employee_id'] = $id;
                                 $this->User->save($this->request->data['User']);
 				$this->Session->setFlash(__('The employee has been saved.'));
 				return $this->redirect(array('action' => 'index'));
@@ -214,7 +214,7 @@ class EmployeesController extends AppController {
 				$this->Session->setFlash(__('The employee could not be saved. Please, try again.'));
 			}
 		}
-                
+
                 $this->loadModel('Team');
                 $lm = $this->Team->find('all', array('recursive'=>0, 'contain'=>array('Employee') ) );
                 //echo '<pre>'; print_r($lm); exit;
@@ -255,7 +255,10 @@ class EmployeesController extends AppController {
 			throw new NotFoundException(__('Invalid employee'));
 		}
 		if ($this->request->is(array('post', 'put'))) {
-			if ($this->Employee->save($this->request->data)) {
+            $this->Employee->read(null, $id);
+            $this->Employee->set($this->request->data['Employee']);
+			if ($this->Employee->save()) {
+                echo "<pre>";print_r($this->request->data);exit;
 				$this->Session->setFlash(__('The employee has been saved.'));
 				return $this->redirect(array('action' => 'index'));
 			} else {
@@ -267,14 +270,17 @@ class EmployeesController extends AppController {
 		}
 		$employeeTypes = $this->Employee->EmployeeType->find('list');
 		$teams = $this->Employee->Team->find('list');
-		$costCentres = $this->Employee->CostCentre->find('list');
+		// $costCentres = $this->Employee->CostCentre->find('list');
 		$locations = $this->Employee->Location->find('list');
 		$jobTitles = $this->Employee->JobTitle->find('list');
 		$countries = $this->Employee->Country->find('list');
 		$ethnicities = $this->Employee->Ethnicity->find('list');
 		$employeeStatuses = $this->Employee->EmployeeStatus->find('list');
 		$salaryBands = $this->Employee->SalaryBand->find('list');
-		$this->set(compact('employeeTypes', 'teams', 'managers', 'delegateds', 'costCentres', 'locations', 'jobTitles', 'countries', 'nationalities', 'ethnicities', 'employeeStatuses', 'salaryBands'));
+        $titles = $this->Employee->Title->find('list');
+        $genders = $this->Employee->Gender->find('list');
+        $nationalities = $this->Employee->Nationality->find('list');
+		$this->set(compact('titles', 'nationalities', 'genders', 'employeeTypes', 'teams', 'managers', 'delegateds', 'costCentres', 'locations', 'jobTitles', 'countries', 'nationalities', 'ethnicities', 'employeeStatuses', 'salaryBands'));
 	}
 
 /**
@@ -298,13 +304,13 @@ class EmployeesController extends AppController {
 		return $this->redirect(array('action' => 'index'));
 	}
         public function column() {
-                
+
                 $this->layout = 'chart';
-                
+
                 $chartName = 'Column Chart';
-                
+
                 $mychart = $this->Highcharts->create($chartName, 'column');
-                
+
                 $this->Highcharts->setChartParams($chartName, array(
                     'renderTo' => 'columnwrapper', // div to display chart inside
                     'chartWidth' => 800,
@@ -396,7 +402,7 @@ class EmployeesController extends AppController {
                 $mychart->addSeries($series1);
                 $mychart->addSeries($series2);
                 $mychart->addSeries($series3);
-                
+
                 $this->set(compact('chartName'));
         }
 }
