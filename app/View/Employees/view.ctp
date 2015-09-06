@@ -91,7 +91,7 @@
             echo  '<td class="actions text-right">';
             //echo $this->Html->link('<span class="glyphicon glyphicon-info-sign">'.__(' View').'</span>', array('controller'=>'emergencycontacts', 'action' => 'view', $u['id']), array('escape'=>false, 'class'=>'btn btn-default btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
             echo $this->Html->link('<span class="glyphicon glyphicon-edit">'.__(' Edit').'</span>', array('controller'=>'emergencycontacts', 'action' => 'edit', $u['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
-            echo $this->Form->postLink('<span class="glyphicon glyphicon-trash">'.__(' Delete').'</span>', array('controller'=>'emergencycontacts', 'action' => 'delete', $u['id'].'.'.$e['Employee']['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to delete'));
+            echo $this->Form->postLink('<span class="glyphicon glyphicon-trash">'.__(' Delete').'</span>', array('controller'=>'emergencycontacts', 'action' => 'delete', $u['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to delete'));
         
         echo '</td></tr>';
         
