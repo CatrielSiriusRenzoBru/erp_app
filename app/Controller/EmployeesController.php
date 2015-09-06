@@ -68,101 +68,10 @@ class EmployeesController extends AppController {
 		if (!$this->Employee->exists($id)) {
 			throw new NotFoundException(__('Invalid employee'));
 		}
-
-
-
-                $chartName = 'Column Chart';
-
-                $mychart = $this->Highcharts->create($chartName, 'column');
-
-                $this->Highcharts->setChartParams($chartName, array(
-                    'renderTo' => 'columnwrapper', // div to display chart inside
-                    'chartWidth' => 800,
-                    'chartHeight' => 600,
-                    'chartMarginTop' => 60,
-                    'chartMarginLeft' => 90,
-                    'chartMarginRight' => 30,
-                    'chartMarginBottom' => 110,
-                    'chartSpacingRight' => 10,
-                    'chartSpacingBottom' => 15,
-                    'chartSpacingLeft' => 0,
-                    'chartAlignTicks' => FALSE,
-                    'chartBackgroundColorLinearGradient' => array(0, 0, 0, 300),
-                    'chartBackgroundColorStops' => array(array(0, 'rgb(217, 217, 217)'), array(1, 'rgb(255, 255, 255)')),
-                    'title' => 'Leave Records',
-                    'titleAlign' => 'center',
-                    'titleFloating' => TRUE,
-                    'titleStyleFont' => '18px Metrophobic, Arial, sans-serif',
-                    'titleStyleColor' => '',//'#0099ff',
-                    'titleX' => 20,
-                    'titleY' => 20,
-                    'legendEnabled' => TRUE,
-                    'legendLayout' => 'horizontal',
-                    'legendAlign' => 'center',
-                    'legendVerticalAlign ' => 'bottom',
-                    'legendItemStyle' => array('color' => '#222'),
-                    'legendBackgroundColorLinearGradient' => array(0, 0, 0, 25),
-                    'legendBackgroundColorStops' => array(array(0, 'rgb(217, 217, 217)'), array(1, 'rgb(255, 255, 255)')),
-                    'tooltipEnabled' => FALSE,
-                    'xAxisLabelsEnabled' => TRUE,
-                    'xAxisLabelsAlign' => 'right',
-                    'xAxisLabelsStep' => 1,
-                    'xAxislabelsX' => 5,
-                    'xAxisLabelsY' => 20,
-                    'xAxisCategories' => array(
-                        'Jan',
-                        'Feb',
-                        'Mar',
-                        'Apr',
-                        'May',
-                        'Jun',
-                        'Jul',
-                        'Aug',
-                        'Sep',
-                        'Oct',
-                        'Nov',
-                        'Dec'
-                    ),
-                    //'yAxisMin' 				=> 0,
-                    //'yAxisMaxPadding'			=> 0.2,
-                    //'yAxisEndOnTick'			=> FALSE,
-                    //'yAxisMinorGridLineWidth' 		=> 0,
-                    //'yAxisMinorTickInterval' 		=> 'auto',
-                    //'yAxisMinorTickLength' 		=> 1,
-                    //'yAxisTickLength'			=> 2,
-                    //'yAxisMinorTickWidth'			=> 1,
-                    'yAxisTitleText' => 'Total Days',
-                    //'yAxisTitleAlign' 			=> 'high',
-                    //'yAxisTitleStyleFont' 		=> '14px Metrophobic, Arial, sans-serif',
-                    //'yAxisTitleRotation' 			=> 0,
-                    //'yAxisTitleX' 			=> 0,
-                    //'yAxisTitleY' 			=> -10,
-                    //'yAxisPlotLines' 			=> array( array('color' => '#808080', 'width' => 1, 'value' => 0 )),
-
-                    /* autostep options */
-                    'enableAutoStep' => FALSE
-                        )
-                );
-
-                $series1 = $this->Highcharts->addChartSeries();
-                $series2 = $this->Highcharts->addChartSeries();
-                $series3 = $this->Highcharts->addChartSeries();
-
-                $series1->addName('Tokyo')->addData($this->chartData1);
-                $series2->addName('London')->addData($this->chartData2);
-                $series3->addName('New York')->addData($this->chartData3);
-
-                $mychart->addSeries($series1);
-                $mychart->addSeries($series2);
-                $mychart->addSeries($series3);
-
-
-
 		$options = array('recursive'=>0, 'conditions' => array('Employee.' . $this->Employee->primaryKey => $id));
 		$employees = $this->Employee->find('first', $options);
                 $team = $this->Employee->Team->find('first', array('recursive'=>0, 'conditions'=>array('Team.id'=>$employees['Employee']['team_id'])));
                 $leaves = $this->Employee->LeaveRequest->find('all', array('recursive'=>0, 'conditions'=>array('LeaveRequest.employee_id'=>$employees['Employee']['id'])));
-                //echo '<pre>'; print_r($leaves); exit;
                 $this->set(compact('employees', 'leaves', 'team', 'chartName'));
 	}
 

@@ -47,6 +47,7 @@ class EmergencyContactsController extends AppController {
  * @return void
  */
 	public function add() {
+            $this->layout = null;
 		if ($this->request->is('post')) {
 			$this->EmergencyContact->create();
 			if ($this->EmergencyContact->save($this->request->data)) {
@@ -56,8 +57,10 @@ class EmergencyContactsController extends AppController {
 				$this->Session->setFlash(__('The emergency contact could not be saved. Please, try again.'));
 			}
 		}
-		$employees = $this->EmergencyContact->Employee->find('list');
-		$this->set(compact('employees'));
+		$title = $this->EmergencyContact->Title->find('list', array('order'=>array('Title.title'=>'ASC')) );
+                $country = $this->EmergencyContact->Country->find('list', array('order'=>array('Country.title'=>'ASC')) );
+                $relationship = $this->EmergencyContact->Relationship->find('list', array('order'=>array('Relationship.title'=>'ASC')) );
+		$this->set(compact('title', 'country', 'relationship'));
 	}
 
 /**

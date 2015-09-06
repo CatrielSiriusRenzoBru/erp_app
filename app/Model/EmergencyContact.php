@@ -146,12 +146,33 @@ class EmergencyContact extends AppModel {
  * @var array
  */
 	public $belongsTo = array(
+                'Country' => array(
+			'className' => 'Country',
+			'foreignKey' => 'country_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
 		'Employee' => array(
 			'className' => 'Employee',
 			'foreignKey' => 'employee_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'Title' => array(
+			'className' => 'Title',
+			'foreignKey' => 'title_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+		'Relationship' => array(
+			'className' => 'Relationship',
+			'foreignKey' => 'relationship_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
 		)
 	);
 }

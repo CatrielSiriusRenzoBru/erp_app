@@ -1,11 +1,11 @@
-
-    <div class="row">
+<div class="row">
+    <div class="col-md-12">
       <?php $e = $employees; 
             //echo '<pre>'; print_r($e); exit;
       ?>
        <h2 class="form-signin-heading"><?php echo $e['Employee']['firstname'].' '. $e['Employee']['othernames'].' '.$e['Employee']['lastname'];?></h2>
        <h4 class="labeller"><?php echo $e['JobTitle']['title'];?></h4>
-       <div class="col-md-2"><div class="picture">Picture</div>
+       <div class="col-sm-2"><div class="picture">Picture</div>
         </div>
         
        <div class="col-md-10">
@@ -45,7 +45,9 @@
         </div>
     </div>
     <div class="row">
-        
+    <div class="panel col-md-12">
+            <div class=" panel panel-primary ">
+                <div class="panel-body">    
         
 <ul class="nav nav-tabs" role="tablist" id="myTab">
   <li role="presentation" class="active"><a href="#emergency" aria-controls="emergency" role="tab" data-toggle="tab">Emergency Contacts</a></li>
@@ -61,7 +63,8 @@
 </ul>
 
 <div class="tab-content">
-  <div role="tabpanel" class="tab-pane active" id="emergency">Home
+  <div role="tabpanel" class="tab-pane active" id="emergency">
+    <?php echo $this->Html->link('<span class="glyphicon glyphicon-plus-sign"></span>'.__(' Add Emergency Contact'), array('controller'=>'emergencycontacts', 'action' => 'add', $e['Employee']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails"));?>
   <?php 
         if(!empty($e['EmergencyContact'])){
            echo '<pre>'; print_r($e['EmergencyContact']);
@@ -89,7 +92,7 @@
         <div id="columnwrapper" style="display: block; float: left; width:100%; margin-bottom: 20px;"></div>
         <div class="clear"></div>	
 
-        <?php echo $this->Highcharts->render($chartName); ?>
+        <?php echo ""; ?>
 
 </div>
       
@@ -202,7 +205,30 @@
     $('#myTab a:first').tab('show')
   })
 </script>
-        
+     
  <?php //echo '<pre>'; print_r($employees); ?>       
-        
+    </div>    
 </div>
+    </div>
+    </div>
+</div>
+
+       <!-- Modal -->
+<div id="addDetails" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div> 
