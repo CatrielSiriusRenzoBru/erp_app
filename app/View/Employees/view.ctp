@@ -64,10 +64,44 @@
 
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="emergency">
-    <?php echo $this->Html->link('<span class="glyphicon glyphicon-plus-sign"></span>'.__(' Add Emergency Contact'), array('controller'=>'emergencycontacts', 'action' => 'add', $e['Employee']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails"));?>
+  <?php echo $this->Html->link('<span class="glyphicon glyphicon-plus-sign"></span>'.__(' Add Emergency Contact'), array('controller'=>'emergencycontacts', 'action' => 'add', $e['Employee']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails"));?>
   <?php 
         if(!empty($e['EmergencyContact'])){
-           echo '<pre>'; print_r($e['EmergencyContact']);
+           // echo '<pre>'; print_r($e['EmergencyContact']); 
+  ?>
+           <table class="table table-hover table-condensed" width="100%" id="LeavePlanTable">
+            <thead><tr>
+                    <th>No.</th>
+                    <th><?php echo __('Fullname'); ?></th>
+                    <th><?php echo __('Relationship'); ?></th>
+                    <th><?php echo __('Contacts'); ?></th>
+                    <th><?php echo __('Address'); ?></th>
+                    <th  class="actions text-center"><?php echo __('Action'); ?></th></tr>
+            </thead>
+            <tbody>
+      <?php 
+      $i = 1;
+        foreach($e['EmergencyContact'] as $u){
+            echo '<tr id="tr'.$u["id"].'">';
+            echo '<th>'.$i.'</th>';
+            echo '<td>'.$u['Title']["title"].' '.$u["firstname"].' '.$u["othernames"].' '.$u["lastname"].'</td>';
+            echo '<td>'.$u['Relationship']["title"].'</td>';
+            echo '<td>'.$u["telephone"].'<br/><a href="mailto:'.$u["email"].'">'.$u["email"].'</a></td>';
+            echo '<td>'.$u["address_line_1"].'<br/>'.$u["address_line_2"].'<br/>'.$u['Country']["title"].'<br/> '.$u["postcode"].'</td>';
+            echo  '<td class="actions text-right">';
+            //echo $this->Html->link('<span class="glyphicon glyphicon-info-sign">'.__(' View').'</span>', array('controller'=>'emergencycontacts', 'action' => 'view', $u['id']), array('escape'=>false, 'class'=>'btn btn-default btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
+            echo $this->Html->link('<span class="glyphicon glyphicon-edit">'.__(' Edit').'</span>', array('controller'=>'emergencycontacts', 'action' => 'edit', $u['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
+            echo $this->Form->postLink('<span class="glyphicon glyphicon-trash">'.__(' Delete').'</span>', array('controller'=>'emergencycontacts', 'action' => 'delete', $u['id'].'.'.$e['Employee']['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to delete'));
+        
+        echo '</td></tr>';
+        
+            $i++;
+        }
+        ?>
+        </tbody></table>
+<?php
+        } else {
+            echo '<p>No emergency contact details found.</p>';
         }
   ?>
   </div>
@@ -166,12 +200,17 @@
         
             $i++;
         }
+        
    
         ?>
             
             </tbody> </table>
 	
-        <?php } ?>
+        <?php  
+        } else {
+            echo '<p>No leave records found.</p>';
+        }
+        ?>
   </div>
   <div role="tabpanel" class="tab-pane" id="assets">Assets Loan
       <?php 
@@ -220,14 +259,9 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title"></h4>
       </div>
-      <div class="modal-body">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
+      
+      
     </div>
 
   </div>

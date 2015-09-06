@@ -34,10 +34,11 @@ class EmergencyContactsController extends AppController {
  * @return void
  */
 	public function view($id = null) {
+            $this->layout = null;
 		if (!$this->EmergencyContact->exists($id)) {
 			throw new NotFoundException(__('Invalid emergency contact'));
 		}
-		$options = array('conditions' => array('EmergencyContact.' . $this->EmergencyContact->primaryKey => $id));
+		$options = array('conditions' => array('recursive'=>-1, 'EmergencyContact.' . $this->EmergencyContact->primaryKey => $id));
 		$this->set('emergencyContact', $this->EmergencyContact->find('first', $options));
 	}
 
@@ -52,9 +53,9 @@ class EmergencyContactsController extends AppController {
 			$this->EmergencyContact->create();
 			if ($this->EmergencyContact->save($this->request->data)) {
 				$this->Session->setFlash(__('The emergency contact has been saved.'));
-				return $this->redirect(array('action' => 'index'));
+				return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['EmergencyContact']['employee_id']));
 			} else {
-				$this->Session->setFlash(__('The emergency contact could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('The emergency contact could not be saved. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
 			}
 		}
 		$title = $this->EmergencyContact->Title->find('list', array('order'=>array('Title.title'=>'ASC')) );
@@ -71,22 +72,29 @@ class EmergencyContactsController extends AppController {
  * @return void
  */
 	public function edit($id = null) {
+            $this->layout = null;
 		if (!$this->EmergencyContact->exists($id)) {
 			throw new NotFoundException(__('Invalid emergency contact'));
 		}
+                
 		if ($this->request->is(array('post', 'put'))) {
+                        $this->EmergencyContact->id = $id;
 			if ($this->EmergencyContact->save($this->request->data)) {
-				$this->Session->setFlash(__('The emergency contact has been saved.'));
-				return $this->redirect(array('action' => 'index'));
+				$this->Session->setFlash(__('The emergency contact has been saved.'), 'alert-box', array('class'=>'alert-success') );
+				return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['EmergencyContact']['employee_id']));
 			} else {
-				$this->Session->setFlash(__('The emergency contact could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('The emergency contact could not be saved. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
 			}
 		} else {
-			$options = array('conditions' => array('EmergencyContact.' . $this->EmergencyContact->primaryKey => $id));
+			$options = array('recursive'=>-1, 'conditions' => array('EmergencyContact.' . $this->EmergencyContact->primaryKey => $id));
 			$this->request->data = $this->EmergencyContact->find('first', $options);
 		}
-		$employees = $this->EmergencyContact->Employee->find('list');
-		$this->set(compact('employees'));
+                
+                        
+		$title = $this->EmergencyContact->Title->find('list', array('order'=>array('Title.title'=>'ASC')) );
+                $country = $this->EmergencyContact->Country->find('list', array('order'=>array('Country.title'=>'ASC')) );
+                $relationship = $this->EmergencyContact->Relationship->find('list', array('order'=>array('Relationship.title'=>'ASC')) );
+		$this->set(compact('title', 'country', 'relationship'));
 	}
 
 /**
@@ -97,16 +105,17 @@ class EmergencyContactsController extends AppController {
  * @return void
  */
 	public function delete($id = null) {
+                echo $id .'-'.$this->params['pass'][0]; exit;
 		$this->EmergencyContact->id = $id;
 		if (!$this->EmergencyContact->exists()) {
 			throw new NotFoundException(__('Invalid emergency contact'));
 		}
 		$this->request->allowMethod('post', 'delete');
 		if ($this->EmergencyContact->delete()) {
-			$this->Session->setFlash(__('The emergency contact has been deleted.'));
+			$this->Session->setFlash(__('The emergency contact has been deleted.'), array('class'=>'alert-success') );
 		} else {
-			$this->Session->setFlash(__('The emergency contact could not be deleted. Please, try again.'));
+			$this->Session->setFlash(__('The emergency contact could not be deleted. Please, try again.'), array('class'=>'alert-danger') );
 		}
-		return $this->redirect(array('action' => 'index'));
+		return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->params['pass'][0]));
 	}
 }

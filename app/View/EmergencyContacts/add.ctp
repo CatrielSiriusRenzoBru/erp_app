@@ -7,7 +7,7 @@
 <?php echo $this->Form->create('EmergencyContact', array("controller" => "emergencycontacts", "action"=>"add", "class"=>"form-horizontal")); ?>
 	
 	<?php
-        echo $this->Form->input('title', array( 'empty'=>'- Select - ', 'options'=>$title,
+        echo $this->Form->input('title_id', array( 'empty'=>'- Select - ', 'options'=>$title,
                             'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Title</label><div class="col-sm-4">',
                             'after'=>'</div></div>',
                             'class'=>'form-control',
@@ -31,6 +31,18 @@
                             'class'=>'form-control',
                             'label'=>false)
                     );
+        echo $this->Form->input('telephone', array('type'=>'text', 'placeholder'=>'Enter first name',
+                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Telephone</label><div class="col-sm-5">',
+                            'after'=>'</div></div>',
+                            'class'=>'form-control',
+                            'label'=>false)
+                    );
+        echo $this->Form->input('email', array('type'=>'email', 'placeholder'=>'Enter first name',
+                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Email Address</label><div class="col-sm-5">',
+                            'after'=>'</div></div>',
+                            'class'=>'form-control',
+                            'label'=>false)
+                    );
         echo $this->Form->input('address_line_1', array('type'=>'text', 'placeholder'=>'Enter first name',
                             'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Address Line 1</label><div class="col-sm-5">',
                             'after'=>'</div></div>',
@@ -39,18 +51,6 @@
                     );
         echo $this->Form->input('address_line_2', array('type'=>'text', 'placeholder'=>'Enter first name',
                             'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Address Line 2</label><div class="col-sm-5">',
-                            'after'=>'</div></div>',
-                            'class'=>'form-control',
-                            'label'=>false)
-                    );
-        echo $this->Form->input('address_line_3', array('type'=>'text', 'placeholder'=>'Enter first name',
-                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Address Line 3</label><div class="col-sm-5">',
-                            'after'=>'</div></div>',
-                            'class'=>'form-control',
-                            'label'=>false)
-                    );
-        echo $this->Form->input('address_line_4', array('type'=>'text', 'placeholder'=>'Enter first name',
-                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Address Line 4</label><div class="col-sm-5">',
                             'after'=>'</div></div>',
                             'class'=>'form-control',
                             'label'=>false)
@@ -67,13 +67,13 @@
                             'class'=>'form-control',
                             'label'=>false)
                     );
-        echo $this->Form->input('relationship', array( 'empty'=>'- Select - ', 'options'=>$relationship,
+        echo $this->Form->input('relationship_id', array( 'empty'=>'- Select - ', 'options'=>$relationship,
                             'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Relationship</label><div class="col-sm-4">',
                             'after'=>'</div></div>',
                             'class'=>'form-control',
                             'label'=>false)
                     );
-		echo $this->Form->input('employee_id', array('type'=>'hidden', 'value'=>'1'));
+		echo $this->Form->input('employee_id', array('type'=>'hidden', 'value'=>$this->params['pass'][0]));
 	echo $this->Form->submit('Add Contact', array('id'=>'AddEmergencyContact',
                             'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label"></label><div class="col-sm-3">', 
                             'after'=>'</div></div>',
@@ -81,5 +81,9 @@
                     );
             echo $this->Form->end();
         ?>
+    
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
 </div>
 

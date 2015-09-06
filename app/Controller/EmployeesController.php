@@ -68,11 +68,12 @@ class EmployeesController extends AppController {
 		if (!$this->Employee->exists($id)) {
 			throw new NotFoundException(__('Invalid employee'));
 		}
-		$options = array('recursive'=>0, 'conditions' => array('Employee.' . $this->Employee->primaryKey => $id));
+		$options = array('recursive'=>2, 'conditions' => array('Employee.' . $this->Employee->primaryKey => $id));
 		$employees = $this->Employee->find('first', $options);
                 $team = $this->Employee->Team->find('first', array('recursive'=>0, 'conditions'=>array('Team.id'=>$employees['Employee']['team_id'])));
                 $leaves = $this->Employee->LeaveRequest->find('all', array('recursive'=>0, 'conditions'=>array('LeaveRequest.employee_id'=>$employees['Employee']['id'])));
-                $this->set(compact('employees', 'leaves', 'team', 'chartName'));
+                //$emergency = $this->EmergencyContact->find('all', array('recursive'=>0, 'conditions'=>array('EmergencyContact.employee_id'=>$employees['Employee']['id'])));
+                $this->set(compact('employees', 'leaves', 'team', 'emergency'));
 	}
 
 /**
