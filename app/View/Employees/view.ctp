@@ -118,7 +118,7 @@
                     <th><?php echo __('Percentage'); ?></th>
                     <th><?php echo __('Contacts'); ?></th>
                     <th><?php echo __('Address'); ?></th>
-                    <th  class="actions text-center"><?php echo __('Action'); ?></th></tr>
+                    <th class="actions text-center"><?php echo __('Action'); ?></th></tr>
             </thead>
             <tbody>
       <?php 
@@ -127,7 +127,7 @@
             echo '<tr id="tr'.$u['Beneficiary']["id"].'">';
             echo '<th>'.$i.'</th>';
             echo '<td>'.$u['Title']["title"].' '.$u['Beneficiary']["firstname"].' '.$u['Beneficiary']["othernames"].' '.$u['Beneficiary']["lastname"].'</td>';
-            echo '<td>'.$u['Beneficiary']['percentage'].'</td>';
+            echo '<td class="text-center">'.$u['Beneficiary']['percentage'].'%</td>';
             echo '<td>'.$u['Beneficiary']['telephone'].'<br/><a href="mailto:'.$u['Beneficiary']["email"].'">'.$u['Beneficiary']["email"].'</a></td>';
             echo '<td>'.$u['Beneficiary']["address_line_1"].'<br/>'.$u['Beneficiary']["address_line_2"].'<br/>'.$u['Country']["title"].'<br/> '.$u['Beneficiary']["postcode"].'</td>';
             echo  '<td class="actions text-right">';

@@ -74,7 +74,7 @@
                             'label'=>false)
                     );
 		echo $this->Form->input('employee_id', array('type'=>'hidden', 'value'=>$this->params['pass'][0]));
-	echo $this->Form->submit('Add Contact', array('id'=>'AddEmergencyContact',
+	echo $this->Form->submit('Save Next-of-King', array('id'=>'AddEmergencyContact',
                             'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label"></label><div class="col-sm-3">', 
                             'after'=>'</div></div>',
                             'class'=>'form-control btn btn-primary') 
