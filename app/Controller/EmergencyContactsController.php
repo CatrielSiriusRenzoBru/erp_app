@@ -55,6 +55,7 @@ class EmergencyContactsController extends AppController {
 				return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['EmergencyContact']['employee_id']));
 			} else {
 				$this->Session->setFlash(__('The emergency contact could not be saved. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
+                                return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['Beneficiary']['employee_id']));
 			}
 		}
 		$title = $this->EmergencyContact->Title->find('list', array('order'=>array('Title.title'=>'ASC')) );
@@ -83,6 +84,7 @@ class EmergencyContactsController extends AppController {
 				return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['EmergencyContact']['employee_id']));
 			} else {
 				$this->Session->setFlash(__('The emergency contact could not be saved. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
+                                return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['Beneficiary']['employee_id']));
 			}
 		} else {
 			$options = array('recursive'=>-1, 'conditions' => array('EmergencyContact.' . $this->EmergencyContact->primaryKey => $id));

@@ -121,16 +121,29 @@ class Beneficiary extends AppModel {
  * @var array
  */
 	public $belongsTo = array(
-		'Employee' => array(
+		'Country' => array(
+			'className' => 'Country',
+			'foreignKey' => 'id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),'Employee' => array(
 			'className' => 'Employee',
 			'foreignKey' => 'employee_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
 		),
-		'Country' => array(
+		'BeneficiaryCountry' => array(
 			'className' => 'Country',
 			'foreignKey' => 'country_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+		'Title' => array(
+			'className' => 'Title',
+			'foreignKey' => 'title_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''

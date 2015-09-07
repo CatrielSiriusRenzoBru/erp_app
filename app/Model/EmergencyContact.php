@@ -125,20 +125,7 @@ class EmergencyContact extends AppModel {
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
-/**
- * hasOne associations
- *
- * @var array
- */
-	public $hasOne = array(
-		'Country' => array(
-			'className' => 'Country',
-			'foreignKey' => 'id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		)
-	);
+
 
 /**
  * belongsTo associations

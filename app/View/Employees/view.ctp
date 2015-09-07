@@ -66,10 +66,10 @@
   <div role="tabpanel" class="tab-pane active" id="emergency">
   <?php echo $this->Html->link('<span class="glyphicon glyphicon-plus-sign"></span>'.__(' Add Emergency Contact'), array('controller'=>'emergencycontacts', 'action' => 'add', $e['Employee']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails"));?>
   <?php 
-        if(!empty($e['EmergencyContact'])){
-           // echo '<pre>'; print_r($e['EmergencyContact']); 
+        if(!empty($emergency)){
+            //echo '<pre>';print_r($emergency);
   ?>
-           <table class="table table-hover table-condensed" width="100%" id="LeavePlanTable">
+           <table class="table table-hover table-condensed" width="100%" id="EmergencyContactTable">
             <thead><tr>
                     <th>No.</th>
                     <th><?php echo __('Fullname'); ?></th>
@@ -81,17 +81,17 @@
             <tbody>
       <?php 
       $i = 1;
-        foreach($e['EmergencyContact'] as $u){
-            echo '<tr id="tr'.$u["id"].'">';
+        foreach($emergency as $u){
+            echo '<tr id="tr'.$u['EmergencyContact']["id"].'">';
             echo '<th>'.$i.'</th>';
-            echo '<td>'.$u['Title']["title"].' '.$u["firstname"].' '.$u["othernames"].' '.$u["lastname"].'</td>';
+            echo '<td>'.$u['Title']["title"].' '.$u['EmergencyContact']["firstname"].' '.$u['EmergencyContact']["othernames"].' '.$u['EmergencyContact']["lastname"].'</td>';
             echo '<td>'.$u['Relationship']["title"].'</td>';
-            echo '<td>'.$u["telephone"].'<br/><a href="mailto:'.$u["email"].'">'.$u["email"].'</a></td>';
-            echo '<td>'.$u["address_line_1"].'<br/>'.$u["address_line_2"].'<br/>'.$u['Country']["title"].'<br/> '.$u["postcode"].'</td>';
+            echo '<td>'.$u['EmergencyContact']["telephone"].'<br/><a href="mailto:'.$u['EmergencyContact']["email"].'">'.$u['EmergencyContact']["email"].'</a></td>';
+            echo '<td>'.$u['EmergencyContact']["address_line_1"].'<br/>'.$u['EmergencyContact']["address_line_2"].'<br/>'.$u['Country']["title"].'<br/> '.$u['EmergencyContact']["postcode"].'</td>';
             echo  '<td class="actions text-right">';
             //echo $this->Html->link('<span class="glyphicon glyphicon-info-sign">'.__(' View').'</span>', array('controller'=>'emergencycontacts', 'action' => 'view', $u['id']), array('escape'=>false, 'class'=>'btn btn-default btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
-            echo $this->Html->link('<span class="glyphicon glyphicon-edit">'.__(' Edit').'</span>', array('controller'=>'emergencycontacts', 'action' => 'edit', $u['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
-            echo $this->Form->postLink('<span class="glyphicon glyphicon-trash">'.__(' Delete').'</span>', array('controller'=>'emergencycontacts', 'action' => 'delete', $u['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to delete'));
+            echo $this->Html->link('<span class="glyphicon glyphicon-edit">'.__(' Edit').'</span>', array('controller'=>'emergencycontacts', 'action' => 'edit', $u['EmergencyContact']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
+            echo $this->Form->postLink('<span class="glyphicon glyphicon-trash">'.__(' Delete').'</span>', array('controller'=>'emergencycontacts', 'action' => 'delete', $u['EmergencyContact']['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to delete'));
         
         echo '</td></tr>';
         
@@ -105,10 +105,45 @@
         }
   ?>
   </div>
-  <div role="tabpanel" class="tab-pane" id="bene">Profile
+  <div role="tabpanel" class="tab-pane" id="bene">
+  <?php echo $this->Html->link('<span class="glyphicon glyphicon-plus-sign"></span>'.__(' Add Next of King'), array('controller'=>'beneficiaries', 'action' => 'add', $e['Employee']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails"));?>
   <?php 
-        if(!empty($e['Beneficiary'])){
-           echo '<pre>'; print_r($e['Beneficiary']);
+        if(!empty($beneficiary)){
+            //echo '<pre>';print_r($emergency);
+  ?>
+           <table class="table table-hover table-condensed" width="100%" id="EmergencyContactTable">
+            <thead><tr>
+                    <th>No.</th>
+                    <th><?php echo __('Fullname'); ?></th>
+                    <th><?php echo __('Percentage'); ?></th>
+                    <th><?php echo __('Contacts'); ?></th>
+                    <th><?php echo __('Address'); ?></th>
+                    <th  class="actions text-center"><?php echo __('Action'); ?></th></tr>
+            </thead>
+            <tbody>
+      <?php 
+      $i = 1;
+        foreach($beneficiary as $u){
+            echo '<tr id="tr'.$u['Beneficiary']["id"].'">';
+            echo '<th>'.$i.'</th>';
+            echo '<td>'.$u['Title']["title"].' '.$u['Beneficiary']["firstname"].' '.$u['Beneficiary']["othernames"].' '.$u['Beneficiary']["lastname"].'</td>';
+            echo '<td>'.$u['Beneficiary']['percentage'].'</td>';
+            echo '<td>'.$u['Beneficiary']['telephone'].'<br/><a href="mailto:'.$u['Beneficiary']["email"].'">'.$u['Beneficiary']["email"].'</a></td>';
+            echo '<td>'.$u['Beneficiary']["address_line_1"].'<br/>'.$u['Beneficiary']["address_line_2"].'<br/>'.$u['Country']["title"].'<br/> '.$u['Beneficiary']["postcode"].'</td>';
+            echo  '<td class="actions text-right">';
+            //echo $this->Html->link('<span class="glyphicon glyphicon-info-sign">'.__(' View').'</span>', array('controller'=>'emergencycontacts', 'action' => 'view', $u['id']), array('escape'=>false, 'class'=>'btn btn-default btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
+            echo $this->Html->link('<span class="glyphicon glyphicon-edit">'.__(' Edit').'</span>', array('controller'=>'beneficiaries', 'action' => 'edit', $u['Beneficiary']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
+            echo $this->Form->postLink('<span class="glyphicon glyphicon-trash">'.__(' Delete').'</span>', array('controller'=>'beneficiaries', 'action' => 'delete', $u['Beneficiary']['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to delete'));
+        
+        echo '</td></tr>';
+        
+            $i++;
+        }
+        ?>
+        </tbody></table>
+<?php
+        } else {
+            echo '<p>No next-of-kings found.</p>';
         }
   ?>
   </div>
