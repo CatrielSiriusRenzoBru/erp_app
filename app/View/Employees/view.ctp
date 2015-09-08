@@ -101,7 +101,7 @@
         </tbody></table>
 <?php
         } else {
-            echo '<p>No emergency contact details found.</p>';
+            echo '<p style="margin:40px 0;">No emergency contact details found.</p>';
         }
   ?>
   </div>
@@ -143,7 +143,7 @@
         </tbody></table>
 <?php
         } else {
-            echo '<p>No next-of-kings found.</p>';
+            echo '<p style="margin:40px 0;">No next-of-kings found.</p>';
         }
   ?>
   </div>
@@ -195,7 +195,7 @@
      <?php   }
       ?>
   </div>
-    <div role="tabpanel" class="tab-pane" id="leaverequests"><h4><?php echo __('Leave Request'); ?></h4>
+    <div role="tabpanel" class="tab-pane" id="leaverequests">
       <?php 
         if(!empty($leaves)){
            //echo '<pre>'; print_r($e['LeaveRequest']);
@@ -228,8 +228,8 @@
             echo  '<td class="actions text-right">';
             echo $this->Html->link('<span class="glyphicon glyphicon-info-sign">'.__(' View').'</span>', array('controller'=>'leaverequests', 'action' => 'view', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-default btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
             if($u["LeaveStatus"]["id"]==2){
-                echo $this->Html->link('<span class="glyphicon glyphicon-ok-circle">'.__(' Approve').'</span>', array('action' => 'approve', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm'), __('Are you sure you want to Approve?')).' ';
-                echo $this->Form->postLink('<span class="glyphicon glyphicon-ban-circle">'.__(' Reject').'</span>', array('action' => 'reject', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to Reject'));
+                //echo $this->Html->link('<span class="glyphicon glyphicon-ok-circle">'.__(' Approve').'</span>', array('controller'=>'leaverequests', 'action' => 'approve', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm'), __('Are you sure you want to Approve?')).' ';
+                //echo $this->Form->postLink('<span class="glyphicon glyphicon-ban-circle">'.__(' Reject').'</span>', array('controller'=>'leaverequests', 'action' => 'reject', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to Reject'));
             }
 
             echo '</td></tr>';
@@ -244,7 +244,7 @@
 	
         <?php  
         } else {
-            echo '<p>No leave records found.</p>';
+            echo '<p style="margin:40px 0;">No leave records found.</p>';
         }
         ?>
   </div>
@@ -286,7 +286,7 @@
         </tbody></table>
 <?php
         } else {
-            echo '<p>No assets found.</p>';
+            echo '<p style="margin:40px 0;">No assets found.</p>';
         }
   ?>
   </div>
