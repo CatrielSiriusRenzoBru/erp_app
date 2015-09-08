@@ -1,32 +1,39 @@
-<div class="assetLoaners form">
-<?php echo $this->Form->create('AssetLoaner'); ?>
-	<fieldset>
-		<legend><?php echo __('Add Asset Loaner'); ?></legend>
+<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title"><?php echo __('Assign Asset'); ?></h4>
+        
+      </div>
+<?php echo $this->Form->create('AssetLoaner', array("controller" => "assetloaners", "action"=>"add", "class"=>"form-horizontal")); ?>
+	
 	<?php
-		echo $this->Form->input('title');
-		echo $this->Form->input('employee_id');
-		echo $this->Form->input('asset_id');
-		echo $this->Form->input('borrowed_date');
-		echo $this->Form->input('due_date');
-		echo $this->Form->input('returned_date');
-		echo $this->Form->input('comments');
-		echo $this->Form->input('approver_id');
-		echo $this->Form->input('approved_date');
-		echo $this->Form->input('created_by');
-		echo $this->Form->input('modified_by');
-		echo $this->Form->input('deleted');
-	?>
-	</fieldset>
-<?php echo $this->Form->end(__('Submit')); ?>
-</div>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-
-		<li><?php echo $this->Html->link(__('List Asset Loaners'), array('action' => 'index')); ?></li>
-		<li><?php echo $this->Html->link(__('List Employees'), array('controller' => 'employees', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Employee'), array('controller' => 'employees', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Assets'), array('controller' => 'assets', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Asset'), array('controller' => 'assets', 'action' => 'add')); ?> </li>
-	</ul>
+		echo $this->Form->input('asset_id', array( 'empty'=>'- Select - ', 
+                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Asset</label><div class="col-sm-4">',
+                            'after'=>'</div></div>',
+                            'class'=>'form-control',
+                            'label'=>false)
+                    );
+//                echo $this->Form->input('borrowed_date', array('type'=>'text', 'placeholder'=>'Pick start date',
+//                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Assign Date</label><div class="col-sm-5">', 
+//                            'after'=>'</div></div>',
+//                            'class'=>'form-control',
+//                            'label'=>false) 
+//                    );
+                echo $this->Form->input('comments', array('type'=>'textarea', 'placeholder'=>'Enter some comment...',
+                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label">Your Comments</label><div class="col-sm-8">', 
+                            'after'=>'</div></div>',
+                            'class'=>'form-control',
+                            'label'=>false)
+                    );
+		echo $this->Form->input('employee_id', array('type'=>'hidden', 'value'=>$this->params['pass'][0]));
+                echo $this->Form->submit('Assign Asset', array('id'=>'AddAssetLoaner',
+                            'before'=>'<div class="form-group"><label for="title" class="col-sm-3 control-label"></label><div class="col-sm-4">', 
+                            'after'=>'</div></div>',
+                            'class'=>'form-control btn btn-primary') 
+                    );
+                echo $this->Form->end();
+        ?>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
 </div>

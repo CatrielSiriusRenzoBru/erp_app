@@ -47,18 +47,20 @@ class AssetLoanersController extends AppController {
  * @return void
  */
 	public function add() {
+            $this->layout = null;
 		if ($this->request->is('post')) {
+                    $this->request->data['AssetLoaner']['borrowed_date'] = date('Y-m-d H:i:s');
 			$this->AssetLoaner->create();
 			if ($this->AssetLoaner->save($this->request->data)) {
-				$this->Session->setFlash(__('The asset loaner has been saved.'));
-				return $this->redirect(array('action' => 'index'));
+				$this->Session->setFlash(__('The asset has been saved.'), 'alert-box', array('class'=>'alert-success') );
+				return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['AssetLoaner']['employee_id']));
 			} else {
-				$this->Session->setFlash(__('The asset loaner could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('The asset could not be saved. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
+				return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['AssetLoaner']['employee_id']));
 			}
 		}
-		$employees = $this->AssetLoaner->Employee->find('list');
 		$assets = $this->AssetLoaner->Asset->find('list');
-		$this->set(compact('employees', 'assets'));
+		$this->set(compact('assets'));
 	}
 
 /**
@@ -69,23 +71,25 @@ class AssetLoanersController extends AppController {
  * @return void
  */
 	public function edit($id = null) {
+            $this->layout = null;
 		if (!$this->AssetLoaner->exists($id)) {
 			throw new NotFoundException(__('Invalid asset loaner'));
 		}
 		if ($this->request->is(array('post', 'put'))) {
+                    $this->AssetLoaner->id = $id;
 			if ($this->AssetLoaner->save($this->request->data)) {
-				$this->Session->setFlash(__('The asset loaner has been saved.'));
-				return $this->redirect(array('action' => 'index'));
+				$this->Session->setFlash(__('The asset has been saved.'), 'alert-box', array('class'=>'alert-success') );
+				return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['AssetLoaner']['employee_id']));
 			} else {
-				$this->Session->setFlash(__('The asset loaner could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('The asset could not be saved. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
+				return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['AssetLoaner']['employee_id']));
 			}
 		} else {
 			$options = array('conditions' => array('AssetLoaner.' . $this->AssetLoaner->primaryKey => $id));
 			$this->request->data = $this->AssetLoaner->find('first', $options);
 		}
-		$employees = $this->AssetLoaner->Employee->find('list');
 		$assets = $this->AssetLoaner->Asset->find('list');
-		$this->set(compact('employees', 'assets'));
+		$this->set(compact('assets'));
 	}
 
 /**
@@ -99,13 +103,16 @@ class AssetLoanersController extends AppController {
 		$this->AssetLoaner->id = $id;
 		if (!$this->AssetLoaner->exists()) {
 			throw new NotFoundException(__('Invalid asset loaner'));
-		}
+		} else {
+                    $employee = $this->AssetLoaner->find('first', array('recursive'=>-1, 'conditions' => array('AssetLoaner.id' => $id)));
+                    $eid = $employee['AssetLoaner']['employee_id'];
+                }
 		$this->request->allowMethod('post', 'delete');
 		if ($this->AssetLoaner->delete()) {
-			$this->Session->setFlash(__('The asset loaner has been deleted.'));
+			$this->Session->setFlash(__('The asset has been deleted.'), 'alert-box', array('class'=>'alert-success') );
 		} else {
-			$this->Session->setFlash(__('The asset loaner could not be deleted. Please, try again.'));
+			$this->Session->setFlash(__('The asset could not be deleted. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
 		}
-		return $this->redirect(array('action' => 'index'));
+		return $this->redirect(array('controller'=>'employees', 'action' => 'view', $eid));
 	}
 }

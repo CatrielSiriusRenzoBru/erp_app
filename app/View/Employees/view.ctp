@@ -67,7 +67,7 @@
   <?php echo $this->Html->link('<span class="glyphicon glyphicon-plus-sign"></span>'.__(' Add Emergency Contact'), array('controller'=>'emergencycontacts', 'action' => 'add', $e['Employee']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails"));?>
   <?php 
         if(!empty($emergency)){
-            //echo '<pre>';print_r($emergency);
+            //echo '<pre>';print_r($e);
   ?>
            <table class="table table-hover table-condensed" width="100%" id="EmergencyContactTable">
             <thead><tr>
@@ -202,7 +202,8 @@
          
       ?>
       <table class="table table-hover table-striped table-condensed" width="100%" id="LeavePlanTable">
-            <thead><tr>
+            <thead>
+                <tr>
                     <th>No.</th>
                     <th><?php echo __('Start Date'); ?></th>
                     <th><?php echo __('End Date'); ?></th>
@@ -210,28 +211,28 @@
                     <th><?php echo __('Days'); ?></th>
                     <th><?php echo __('Day Type'); ?></th>
                     <th><?php echo __('Status'); ?></th>
-                    <th></tr>
+                    <th class="text-center"><?php echo __('Action'); ?></th>
+                </tr>
             </thead>
             <tbody>
-      <?php //echo '<pre>'; print_r($planned); exit;
+      <?php 
       $i = 1;
         foreach($leaves as $u){
             echo '<tr id="tr'.$u["LeaveRequest"]["id"].'"><th>'.$i.'</th>';
-                    ;
-                    echo '<td>'.date('d M Y', strtotime($u["LeaveRequest"]["start_date"])).'</td>';
-                    echo '<td>'.date('d M Y', strtotime($u["LeaveRequest"]["end_date"])).'</td>';
-                    echo '<td>'.$u["LeaveType"]["title"].'</td>';
-                    echo '<td align="center">'.$u["LeaveRequest"]["leave_days"].'</td>';
-                    echo '<td>'.$u["LeaveRequest"]["days_type"].'</td>';
-                    echo '<td>'.$u["LeaveStatus"]["title"].'</td>';
-                    echo  '<td class="actions text-right"> <button type="button" class="glyphicon glyphicon-info-sign btn btn-default btn-sm" data-toggle="modal" data-target="#myModal"> View</button> ';
-                   
-                    if($u["LeaveStatus"]["id"]==2){
-                        echo $this->Html->link('<span class="glyphicon glyphicon-ok-circle">'.__(' Approve').'</span>', array('action' => 'approve', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm'), __('Are you sure you want to Approve?')).' ';
-			echo $this->Form->postLink('<span class="glyphicon glyphicon-ban-circle">'.__(' Reject').'</span>', array('action' => 'reject', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to Reject'));
-                    }
-                    
-                echo '</td></tr>';
+            echo '<td>'.date('d M Y', strtotime($u["LeaveRequest"]["start_date"])).'</td>';
+            echo '<td>'.date('d M Y', strtotime($u["LeaveRequest"]["end_date"])).'</td>';
+            echo '<td>'.$u["LeaveType"]["title"].'</td>';
+            echo '<td align="center">'.$u["LeaveRequest"]["leave_days"].'</td>';
+            echo '<td>'.$u["LeaveRequest"]["days_type"].'</td>';
+            echo '<td>'.$u["LeaveStatus"]["title"].'</td>';
+            echo  '<td class="actions text-right">';
+            echo $this->Html->link('<span class="glyphicon glyphicon-info-sign">'.__(' View').'</span>', array('controller'=>'leaverequests', 'action' => 'view', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-default btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
+            if($u["LeaveStatus"]["id"]==2){
+                echo $this->Html->link('<span class="glyphicon glyphicon-ok-circle">'.__(' Approve').'</span>', array('action' => 'approve', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm'), __('Are you sure you want to Approve?')).' ';
+                echo $this->Form->postLink('<span class="glyphicon glyphicon-ban-circle">'.__(' Reject').'</span>', array('action' => 'reject', $u['LeaveRequest']['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to Reject'));
+            }
+
+            echo '</td></tr>';
         
             $i++;
         }
@@ -239,7 +240,7 @@
    
         ?>
             
-            </tbody> </table>
+        </tbody> </table>
 	
         <?php  
         } else {
@@ -247,12 +248,47 @@
         }
         ?>
   </div>
-  <div role="tabpanel" class="tab-pane" id="assets">Assets Loan
+  <div role="tabpanel" class="tab-pane" id="assets">
+        <?php echo $this->Html->link('<span class="glyphicon glyphicon-plus-sign"></span>'.__(' Assign Asset'), array('controller'=>'assetloaners', 'action' => 'add', $e['Employee']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails"));?>
+  <?php 
+        if(!empty($asset)){
+            //echo '<pre>';print_r($emergency);
+  ?>
+           <table class="table table-hover table-condensed" width="100%" id="EmergencyContactTable">
+            <thead><tr>
+                    <th>No.</th>
+                    <th><?php echo __('Asset Name'); ?></th>
+                    <th><?php echo __('Barcode'); ?></th>
+                    <th><?php echo __('Assigned Date'); ?></th>
+                    <th><?php echo __('Comments'); ?></th>
+                    <th class="actions text-center"><?php echo __('Action'); ?></th></tr>
+            </thead>
+            <tbody>
       <?php 
-        if(!empty($e['AssetLoaner'])){
-           echo '<pre>'; print_r($e['AssetLoaner']);
+      $i = 1;
+        foreach($asset as $u){
+            echo '<tr id="tr'.$u['AssetLoaner']["id"].'">';
+            echo '<th>'.$i.'</th>';
+            echo '<td>'.$u['Asset']["title"].' </td>';
+            echo '<td>'.$u['Asset']['barcode'].'</td>';
+            echo '<td>'.$u['AssetLoaner']['borrowed_date'].'</td>';
+            echo '<td>'.$u['AssetLoaner']["comments"].'</td>';
+            echo  '<td class="actions text-right">';
+            //echo $this->Html->link('<span class="glyphicon glyphicon-info-sign">'.__(' View').'</span>', array('controller'=>'emergencycontacts', 'action' => 'view', $u['id']), array('escape'=>false, 'class'=>'btn btn-default btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
+            echo $this->Html->link('<span class="glyphicon glyphicon-edit">'.__(' Edit').'</span>', array('controller'=>'assetloaners', 'action' => 'edit', $u['AssetLoaner']['id']), array('escape'=>false, 'class'=>'btn btn-primary btn-sm', "data-toggle"=>"modal", "data-target"=>"#addDetails")).' ';
+            echo $this->Form->postLink('<span class="glyphicon glyphicon-trash">'.__(' Delete').'</span>', array('controller'=>'assetloaners', 'action' => 'delete', $u['AssetLoaner']['id']), array('escape'=>false, 'class'=>'btn btn-danger btn-sm'), __('Are you sure you want to delete'));
+        
+        echo '</td></tr>';
+        
+            $i++;
         }
-      ?>
+        ?>
+        </tbody></table>
+<?php
+        } else {
+            echo '<p>No assets found.</p>';
+        }
+  ?>
   </div>
   <div role="tabpanel" class="tab-pane" id="salary">Salary Detials
       <?php 
@@ -287,7 +323,7 @@
     </div>
 </div>
 
-       <!-- Modal -->
+<!-- Modal -->
 <div id="addDetails" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
