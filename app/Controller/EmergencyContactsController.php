@@ -110,7 +110,7 @@ class EmergencyContactsController extends AppController {
 		if (!$this->EmergencyContact->exists()) {
 			throw new NotFoundException(__('Invalid emergency contact'));
                 } else {
-                    $employee = $this->EmergencyContact->find('first', array('recursive'=>-1, 'conditions' => array('EmergencyContact.' . $this->EmergencyContact->primaryKey => $id)));
+                    $employee = $this->EmergencyContact->find('first', array('recursive'=>-1, 'conditions' => array('EmergencyContact.id' => $id)));
                     $eid = $employee['EmergencyContact']['employee_id'];
                 }
 		$this->request->allowMethod('post', 'delete');

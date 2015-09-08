@@ -72,11 +72,13 @@ class EmployeesController extends AppController {
 		$employees = $this->Employee->find('first', $options);
                 $team = $this->Employee->Team->find('first', array('recursive'=>0, 'conditions'=>array('Team.id'=>$employees['Employee']['team_id'])));
                 $leaves = $this->Employee->LeaveRequest->find('all', array('recursive'=>0, 'conditions'=>array('LeaveRequest.employee_id'=>$employees['Employee']['id'])));
-                $this->loadModel('EmergencyContact');
-                $this->loadModel('Beneficiary');
-                $emergency = $this->EmergencyContact->find('all', array('recursive'=>0, 'conditions'=>array('EmergencyContact.employee_id'=>$employees['Employee']['id'])));
-                $beneficiary = $this->Beneficiary->find('all', array('recursive'=>0, 'conditions'=>array('Beneficiary.employee_id'=>$employees['Employee']['id'])));
-                $this->set(compact('employees', 'leaves', 'team', 'emergency', 'beneficiary'));
+                //$this->loadModel('EmergencyContact');
+                //$this->loadModel('Beneficiary');
+                //$this->loadModel('AssetLoaner');
+                $emergency = $this->Employee->EmergencyContact->find('all', array('recursive'=>0, 'conditions'=>array('EmergencyContact.employee_id'=>$employees['Employee']['id'], 'EmergencyContact.deleted'=>0)));
+                $beneficiary = $this->Employee->Beneficiary->find('all', array('recursive'=>0, 'conditions'=>array('Beneficiary.employee_id'=>$employees['Employee']['id'], 'Beneficiary.deleted'=>0)));
+                $asset = $this->Employee->AssetLoaner->find('all', array('recursive'=>0, 'conditions'=>array('AssetLoaner.employee_id'=>$employees['Employee']['id'], 'AssetLoaner.deleted'=>0)));
+                $this->set(compact('employees', 'leaves', 'team', 'emergency', 'beneficiary', 'asset'));
 	}
 
 /**

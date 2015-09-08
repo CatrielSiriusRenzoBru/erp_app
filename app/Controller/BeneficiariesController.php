@@ -90,7 +90,7 @@ class BeneficiariesController extends AppController {
 			$this->Beneficiary->id = $id;
                         if ($this->Beneficiary->save($this->request->data)) {
 				$this->Session->setFlash(__('The next-of-king has been saved.'), 'alert-box', array('class'=>'alert-success') );
-				return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['Beneficiary']['employee_id']));
+				return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['Beneficiary']['employee_id'].'#bene'));
 			} else {
 				$this->Session->setFlash(__('The beneficiary could not be saved. Please, try again.'), 'alert-box', array('class'=>'alert-danger') );
 				return $this->redirect(array('controller'=>'employees', 'action' => 'view', $this->request->data['Beneficiary']['employee_id']));
@@ -120,7 +120,7 @@ class BeneficiariesController extends AppController {
 		if (!$this->Beneficiary->exists()) {
 			throw new NotFoundException(__('Invalid beneficiary'));
 		} else {
-                    $employee = $this->Beneficiary->find('first', array('recursive'=>-1, 'conditions' => array('Beneficiary.' . $this->Beneficiary->primaryKey => $id)));
+                    $employee = $this->Beneficiary->find('first', array('recursive'=>-1, 'conditions' => array('Beneficiary.id' => $id)));
                     $eid = $employee['Beneficiary']['employee_id'];
                 }
 		$this->request->allowMethod('post', 'delete');
